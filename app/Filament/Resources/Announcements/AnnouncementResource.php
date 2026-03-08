@@ -45,6 +45,11 @@ class AnnouncementResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['department', 'publisher']);
+    }
+
     public static function getPages(): array
     {
         return [

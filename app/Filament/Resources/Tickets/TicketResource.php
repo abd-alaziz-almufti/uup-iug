@@ -49,6 +49,11 @@ class TicketResource extends Resource
         ];
     }
 
+    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getEloquentQuery()->with(['student', 'department', 'assignedUser']);
+    }
+
     public static function getPages(): array
     {
         return [

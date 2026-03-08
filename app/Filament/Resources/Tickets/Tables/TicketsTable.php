@@ -169,8 +169,8 @@ class TicketsTable
                             Forms\Components\Select::make('assigned_to')
                                 ->label('اختر موظف')
                                 ->relationship('assignedUser', 'name', function ($query) {
-                                    return $query->whereHas('role', function ($q) {
-                                        $q->whereIn('role_name', ['Staff', 'Advisor', 'Admin']);
+                                    return $query->whereHas('roles', function ($q) {
+                                        $q->whereIn('name', ['Support Agent', 'Super Admin', 'super_admin']);
                                     });
                                 })
                                 ->searchable()

@@ -23,11 +23,18 @@ class DatabaseSeeder extends Seeder
         //    'email' => 'test@example.com',
         //]);
 
+        $this->command->info('Generating Shield permissions...');
+        \Illuminate\Support\Facades\Artisan::call('shield:generate', [
+            '--all' => true,
+            '--option' => 'policies_and_permissions',
+            '--panel' => 'admin',
+        ]);
+        $this->command->info('Shield permissions generated!');
+
         $this->call([
-            RoleSeeder::class,
+            RolesAndUsersSeeder::class,
             DepartmentSeeder::class,
             CourseSeeder::class,
-            UserSeeder::class,
             TicketSeeder::class,
             FAQSeeder::class,
         ]);

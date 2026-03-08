@@ -19,8 +19,8 @@ class TicketSeeder extends Seeder
         $this->command->info('🎫 Creating tickets...');
 
         // جلب المستخدمين
-        $students = User::where('role_id', 1)->get(); // الطلاب
-        $staff = User::where('role_id', 2)->get(); // الموظفين
+        $students = User::role('Student')->get(); // الطلاب
+        $staff = User::role('Support Agent')->get(); // الموظفين
         $departments = Department::where('type', 'Admin_Dept')->get();
 
         if ($students->isEmpty() || $departments->isEmpty()) {

@@ -42,18 +42,20 @@ class UsersTable
                     ->sortable()
                     ->copyable(),
 
-                BadgeColumn::make('role.role_name')
+                BadgeColumn::make('roles.name')
                     ->label('الدور')
                     ->colors([
-                        'danger' => 'Admin',
-                        'warning' => 'Staff',
-                        'info' => 'Advisor',
+                        'danger' => 'Super Admin',
+                        'warning' => 'Support Agent',
+                        'info' => 'Academic Supervisor',
                         'success' => 'Student',
                     ])
                     ->formatStateUsing(fn(string $state): string => match ($state) {
-                        'Admin' => 'مدير',
-                        'Staff' => 'موظف',
-                        'Advisor' => 'مستشار',
+                        'Super Admin' => 'مدير',
+                        'super_admin' => 'مدير',
+                        'Support Agent' => 'موظف دعم',
+                        'Academic Supervisor' => 'مشرف أكاديمي',
+                        'Content Manager' => 'مدير محتوى',
                         'Student' => 'طالب',
                         default => $state,
                     }),
@@ -72,9 +74,9 @@ class UsersTable
             ->defaultSort('created_at', 'desc')
 
             ->filters([
-                SelectFilter::make('role_id')
+                SelectFilter::make('roles')
                     ->label('الدور')
-                    ->relationship('role', 'role_name')
+                    ->relationship('roles', 'name')
                     ->searchable()
                     ->preload(),
 

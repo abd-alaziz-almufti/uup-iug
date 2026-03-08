@@ -9,11 +9,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -25,14 +26,13 @@ class User extends Authenticatable implements FilamentUser
         'name',
         'email',
         'password',
-        'role_id',
         'department_id',
     ];
 
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return in_array($this->role->role_name, ['Admin', 'Staff', 'Advisor']);
+        return ! $this->hasRole('Student'); // Prevent students from accessing the admin dashboard
     }
     /**
      * The attributes that should be hidden for serialization.
@@ -55,14 +55,6 @@ class User extends Authenticatable implements FilamentUser
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
-    }
-
-    /**
-     * الدور (Role) للمستخدم
-     */
-    public function role()
-    {
-        return $this->belongsTo(Role::class);
     }
 
     /**
@@ -182,7 +174,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isStudent()
     {
-        return $this->role->role_name === 'Student';
+        return $this->hasRole('Student');
     }
 
     /**
@@ -190,7 +182,7 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isStaff()
     {
-        return $this->role->role_name === 'Staff';
+        return $this->hasRole('Support Agent');
     }
 
     /**
@@ -198,15 +190,6 @@ class User extends Authenticatable implements FilamentUser
      */
     public function isAdmin()
     {
-        return $this->role->role_name === 'Admin';
+        return $this->hasRole('Super Admin') || $this->hasRole('super_admin');
     }
-
-    /**
-     * فحص الصلاحيات
-     */
-    public function hasPermission(string $permission)
-    {
-        return in_array($permission, $this->role->permissions ?? []);
-    }
-
 }

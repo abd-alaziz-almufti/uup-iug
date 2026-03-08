@@ -47,9 +47,10 @@ class UserForm
 
                 Section::make('الدور والقسم')
                     ->schema([
-                        Select::make('role_id')
+                        Select::make('roles')
                             ->label('الدور')
-                            ->relationship('role', 'role_name')
+                            ->relationship('roles', 'name')
+                            ->multiple()
                             ->searchable()
                             ->preload()
                             ->required()
