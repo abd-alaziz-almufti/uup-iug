@@ -13,6 +13,11 @@ use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\ProfileEditRequest;
+use Filament\Actions\Action;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Select;
+use Filament\Notifications\Notification;
 
 class UsersTable
 {
@@ -91,9 +96,44 @@ class UsersTable
                     ViewAction::make()
                         ->label('عرض'),
                     EditAction::make()
-                        ->label('تعديل'),
+                        ->label('تعديل')
+                        ->visible(fn () => auth()->user()->hasRole('Super Admin')), // Only Super Admin can edit directly
                     DeleteAction::make()
-                        ->label('حذف'),
+                        ->label('حذف')
+                        ->visible(fn () => auth()->user()->hasRole('Super Admin')),
+                        
+                    Action::make('suggest_edit')
+                        ->label('اقتراح تعديل بيانات')
+                        ->icon('heroicon-o-pencil-square')
+                        ->color('warning')
+                        ->visible(fn (User $record) => auth()->user()->hasRole('Academic Supervisor') && $record->hasRole('Student'))
+                        ->form([
+                            TextInput::make('name')
+                                ->label('الاسم')
+                                ->required()
+                                ->default(fn (User $record) => $record->name),
+                            TextInput::make('email')
+                                ->label('البريد الإلكتروني')
+                                ->email()
+                                ->required()
+                                ->default(fn (User $record) => $record->email),
+                            TextInput::make('university_id')
+                                ->label('الرقم الجامعي')
+                                ->required()
+                                ->default(fn (User $record) => $record->university_id),
+                        ])
+                        ->action(function (array $data, User $record) {
+                            ProfileEditRequest::create([
+                                'student_id' => $record->id,
+                                'requested_by' => auth()->id(),
+                                'requested_data' => $data,
+                                'status' => 'pending',
+                            ]);
+                            Notification::make()
+                                ->title('تم إرسال اقتراح التعديل بنجاح لمدير النظام')
+                                ->success()
+                                ->send();
+                        }),
                 ]),
             ])
             ->bulkActions([

@@ -13,6 +13,8 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use App\Models\FAQ;
+use Filament\Actions\Action;
 
 class FAQSTable
 {
@@ -65,6 +67,20 @@ class FAQSTable
                     ->dateTime('Y-m-d')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+
+                BadgeColumn::make('status')
+                    ->label('حالة النشر')
+                    ->colors([
+                        'warning' => FAQ::STATUS_PENDING,
+                        'success' => FAQ::STATUS_PUBLISHED,
+                        'danger' => FAQ::STATUS_REJECTED,
+                    ])
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        FAQ::STATUS_PENDING => 'قيد المراجعة',
+                        FAQ::STATUS_PUBLISHED => 'منشور',
+                        FAQ::STATUS_REJECTED => 'مرفوض',
+                        default => $state,
+                    }),
             ])
             ->defaultSort('created_at', 'desc')
             ->filters([
@@ -96,6 +112,22 @@ class FAQSTable
                     ViewAction::make()->label('عرض'),
                     EditAction::make()->label('تعديل'),
                     DeleteAction::make()->label('حذف'),
+                    
+                    Action::make('approve')
+                        ->label('موافقة ونشر')
+                        ->icon('heroicon-o-check-circle')
+                        ->color('success')
+                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasRole('Academic Supervisor'))
+                        ->action(fn (FAQ $record) => $record->update(['status' => FAQ::STATUS_PUBLISHED]))
+                        ->requiresConfirmation(),
+                        
+                    Action::make('reject')
+                        ->label('رفض النشر')
+                        ->icon('heroicon-o-x-circle')
+                        ->color('danger')
+                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasRole('Academic Supervisor'))
+                        ->action(fn (FAQ $record) => $record->update(['status' => FAQ::STATUS_REJECTED]))
+                        ->requiresConfirmation(),
                 ]),
             ])
             ->bulkActions([

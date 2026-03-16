@@ -11,9 +11,14 @@ class FAQ extends Model
     protected $fillable = [
         'question',
         'answer',
+        'status',
         'category',
         'course_id',
     ];
+
+    public const STATUS_PENDING = 'pending';
+    public const STATUS_PUBLISHED = 'published';
+    public const STATUS_REJECTED = 'rejected';
 
     /**
      * المادة الدراسية (لو السؤال خاص بمادة)

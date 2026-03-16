@@ -8,6 +8,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use App\Models\FAQ;
 
 class FAQForm
 {
@@ -54,6 +55,17 @@ class FAQForm
                             ->placeholder('عام (غير مرتبط بمادة)')
                             ->native(false)
                             ->helperText('اترك فارغاً إذا كان السؤال عاماً'),
+                            
+                        Select::make('status')
+                            ->label('الحالة')
+                            ->options([
+                                FAQ::STATUS_PENDING => 'قيد المراجعة',
+                                FAQ::STATUS_PUBLISHED => 'منشور',
+                                FAQ::STATUS_REJECTED => 'مرفوض',
+                            ])
+                            ->default(FAQ::STATUS_PENDING)
+                            ->disabled(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Academic Supervisor']))
+                            ->visible(fn ($record) => $record !== null), // Only show on edit
                     ])
                     ->columns(2),
             ]);
