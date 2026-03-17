@@ -30,8 +30,13 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => '#008C4A',
+                'info' => '#008DD2',
             ])
+            ->brandName('المنصة الجامعية الموحدة')
+            ->brandLogo(fn () => view('filament.branding'))
+            ->brandLogoHeight('auto')
+            ->favicon(asset('favicon.png'))
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
