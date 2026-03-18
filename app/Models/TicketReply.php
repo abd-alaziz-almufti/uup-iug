@@ -13,6 +13,21 @@ class TicketReply extends Model
     ];
 
     /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::created(function ($reply) {
+            // تحديث حالة التذكرة لتصبح "قيد المعالجة" عند إضافة رد
+            if ($reply->ticket && $reply->ticket->status === 'open') {
+                $reply->ticket->update(['status' => 'in_progress']);
+            }
+        });
+    }
+
+    /**
      * التذكرة
      */
     public function ticket()

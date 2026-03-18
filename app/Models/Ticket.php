@@ -11,10 +11,20 @@ class Ticket extends Model
         'category',
         'status',
         'priority',
+        'target_type',
+        'course_id',
         'student_id',
         'department_id',
         'assigned_to',
     ];
+
+    /**
+     * المادة المرتبطة (في حال مراسلة المدرس)
+     */
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
+    }
 
     /**
      * الطالب صاحب التذكرة

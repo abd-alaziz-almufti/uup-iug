@@ -33,7 +33,7 @@ class AdminPanelProvider extends PanelProvider
                 'primary' => '#008C4A',
                 'info' => '#008DD2',
             ])
-            ->brandName('المنصة الجامعية الموحدة')
+            ->brandName('الجامعة الإسلامية بغزة')
             ->brandLogo(fn () => view('filament.branding'))
             ->brandLogoHeight('auto')
             ->favicon(asset('favicon.png'))

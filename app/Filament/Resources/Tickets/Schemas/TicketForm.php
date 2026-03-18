@@ -22,6 +22,26 @@ class TicketForm
                             ->maxLength(255)
                             ->columnSpanFull(),
 
+                        Select::make('target_type')
+                            ->label('الجهة المستهدفة')
+                            ->options([
+                                'supervisor' => 'المشرف الأكاديمي',
+                                'dean' => 'عميد الكلية',
+                                'instructor' => 'مدرس المادة',
+                                'admission' => 'القبول والتسجيل',
+                            ])
+                            ->required()
+                            ->live()
+                            ->native(false),
+
+                        Select::make('course_id')
+                            ->label('المادة الدراسية')
+                            ->relationship('course', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->visible(fn (Forms\Get $get) => $get('target_type') === 'instructor'),
+
                         Select::make('category')
                             ->label('التصنيف')
                             ->options([
@@ -46,7 +66,8 @@ class TicketForm
                             ])
                             ->default('open')
                             ->required()
-                            ->native(false),
+                            ->native(false)
+                            ->visible(fn () => auth()->user()->hasRole(['Super Admin', 'super_admin', 'Academic Supervisor', 'Support Agent', 'Dean', 'Instructor', 'Admission Officer'])),
 
                         Select::make('priority')
                             ->label('الأولوية')

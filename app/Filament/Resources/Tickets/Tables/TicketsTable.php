@@ -161,17 +161,45 @@ class TicketsTable
                     EditAction::make()
                         ->label('تعديل'),
 
+                    Action::make('claim')
+                        ->label('استلام التذكرة')
+                        ->icon('heroicon-m-hand-raised')
+                        ->color('success')
+                        ->visible(fn (Ticket $record) => 
+                            $record->assigned_to === null && 
+                            auth()->user()->hasRole('Support Agent') && 
+                            $record->department_id === auth()->user()->department_id
+                        )
+                        ->action(function (Ticket $record) {
+                            $record->update([
+                                'assigned_to' => auth()->id(),
+                                'status' => 'in_progress',
+                            ]);
+                        })
+                        ->successNotificationTitle('تم استلام التذكرة بنجاح'),
+
                     Action::make('assign')
                         ->label('تعيين لموظف')
                         ->icon('heroicon-m-user-plus')
                         ->color('warning')
+                        ->visible(fn (Ticket $record) => 
+                            auth()->user()->hasRole(['Super Admin', 'super_admin']) || 
+                            (auth()->user()->hasRole('Academic Supervisor') && $record->department_id === auth()->user()->department_id)
+                        )
                         ->form([
                             Forms\Components\Select::make('assigned_to')
                                 ->label('اختر موظف')
-                                ->relationship('assignedUser', 'name', function ($query) {
-                                    return $query->whereHas('roles', function ($q) {
-                                        $q->whereIn('name', ['Support Agent', 'Super Admin', 'super_admin']);
+                                ->relationship('assignedUser', 'name', function ($query, Ticket $record) {
+                                    $q = $query->whereHas('roles', function ($innerQ) {
+                                        $innerQ->whereIn('name', ['Support Agent', 'Super Admin', 'super_admin']);
                                     });
+
+                                    // المشرق الأكاديمي يعين فقط لموظفي قسمه
+                                    if (auth()->user()->hasRole('Academic Supervisor')) {
+                                        $q->where('department_id', auth()->user()->department_id);
+                                    }
+
+                                    return $q;
                                 })
                                 ->searchable()
                                 ->required(),
