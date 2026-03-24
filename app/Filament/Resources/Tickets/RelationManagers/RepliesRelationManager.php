@@ -38,6 +38,7 @@ class RepliesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query) => $query->with(['user', 'user.roles']))
             ->recordTitleAttribute('reply_text')
             ->columns([
                 Tables\Columns\TextColumn::make('user.name')

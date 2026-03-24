@@ -40,7 +40,7 @@ class TicketForm
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->visible(fn (Forms\Get $get) => $get('target_type') === 'instructor'),
+                            ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('target_type') === 'instructor'),
 
                         Select::make('category')
                             ->label('التصنيف')

@@ -20,9 +20,22 @@ class TicketReply extends Model
         parent::boot();
 
         static::created(function ($reply) {
-            // تحديث حالة التذكرة لتصبح "قيد المعالجة" عند إضافة رد
+            // تحديث حالة التذكرة لتصبح "قيد المعالجة" عند إضافة رد مفتوح
             if ($reply->ticket && $reply->ticket->status === 'open') {
                 $reply->ticket->update(['status' => 'in_progress']);
+            }
+
+            // إرسال إشعار للموظف المسؤول إذا كان الرد من الطالب
+            if ($reply->ticket && $reply->ticket->assigned_to && $reply->user_id !== $reply->ticket->assigned_to) {
+                $assignedUser = \App\Models\User::find($reply->ticket->assigned_to);
+                if ($assignedUser) {
+                    \Filament\Notifications\Notification::make()
+                        ->title('رد جديد على تذكرة')
+                        ->body('طالب قام بالرد على التذكرة: ' . $reply->ticket->title)
+                        ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                        ->info()
+                        ->sendToDatabase($assignedUser);
+                }
             }
         });
     }

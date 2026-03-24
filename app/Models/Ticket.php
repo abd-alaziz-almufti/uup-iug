@@ -106,4 +106,46 @@ class Ticket extends Model
     {
         return $query->where('priority', 'urgent');
     }
+
+    protected static function booted()
+    {
+        static::created(function ($ticket) {
+            $usersToNotify = collect();
+
+            if ($ticket->target_type === 'dean') {
+                $usersToNotify = \App\Models\User::role('Dean')->where('department_id', $ticket->department_id)->get();
+            } elseif ($ticket->target_type === 'admission') {
+                $usersToNotify = \App\Models\User::role('Admission Officer')->get();
+            } elseif ($ticket->target_type === 'supervisor') {
+                $usersToNotify = \App\Models\User::role('Academic Supervisor')->where('department_id', $ticket->department_id)->get();
+            } else {
+                // Default fallback to instructors or agents
+                $usersToNotify = \App\Models\User::role('Instructor')->where('department_id', $ticket->course ? $ticket->course->department_id : $ticket->department_id)->get();
+            }
+
+            if ($usersToNotify->isNotEmpty()) {
+                $recipientName = $ticket->target_type === 'admission' ? 'موظفي القبول' : 'لكم';
+                \Filament\Notifications\Notification::make()
+                    ->title('تذكرة جديدة')
+                    ->body('تم إنشاء تذكرة جديدة موجهة ' . $recipientName . ' بعنوان: ' . $ticket->title)
+                    ->icon('heroicon-o-ticket')
+                    ->info()
+                    ->sendToDatabase($usersToNotify);
+            }
+        });
+
+        static::updated(function ($ticket) {
+            if ($ticket->wasChanged('assigned_to') && $ticket->assigned_to) {
+                $assignedUser = \App\Models\User::find($ticket->assigned_to);
+                if ($assignedUser) {
+                    \Filament\Notifications\Notification::make()
+                        ->title('تذكرة مسندة إليك')
+                        ->body('تم تعيينك لمتابعة التذكرة: ' . $ticket->title)
+                        ->icon('heroicon-o-user-plus')
+                        ->success()
+                        ->sendToDatabase($assignedUser);
+                }
+            }
+        });
+    }
 }

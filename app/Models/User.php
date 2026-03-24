@@ -97,13 +97,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Announcement::class, 'published_by');
     }
 
-    /**
-     * الإشعارات
-     */
-    public function notifications()
-    {
-        return $this->hasMany(Notification::class);
-    }
+
 
     /**
      * الأدلة اللي رفعها
