@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Ticket extends Model
 {
     protected $fillable = [
+        'ticket_code',
         'title',
         'category',
         'status',
@@ -109,6 +110,14 @@ class Ticket extends Model
 
     protected static function booted()
     {
+        static::creating(function ($ticket) {
+            if (empty($ticket->ticket_code)) {
+                $lastTicket = static::latest('id')->first();
+                $nextId = $lastTicket ? $lastTicket->id + 1 : 1;
+                $ticket->ticket_code = 'AA' . str_pad($nextId, 4, '0', STR_PAD_LEFT);
+            }
+        });
+
         static::created(function ($ticket) {
             $usersToNotify = collect();
 

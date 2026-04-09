@@ -11,6 +11,7 @@ class Contact extends Model
         'position',
         'email',
         'phone',
+        'whatsapp',
         'office',
         'department_id',
         'user_id',
