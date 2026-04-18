@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Contacts\Pages;
 
 use App\Filament\Resources\Contacts\ContactResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListContacts extends ListRecords
+class ListContacts extends ManageRecords
 {
     protected static string $resource = ContactResource::class;
 

@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Tickets\Pages;
 
 use App\Filament\Resources\Tickets\TicketResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListTickets extends ListRecords
+class ListTickets extends ManageRecords
 {
     protected static string $resource = TicketResource::class;
 

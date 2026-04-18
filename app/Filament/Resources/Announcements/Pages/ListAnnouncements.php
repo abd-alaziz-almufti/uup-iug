@@ -4,9 +4,9 @@ namespace App\Filament\Resources\Announcements\Pages;
 
 use App\Filament\Resources\Announcements\AnnouncementResource;
 use Filament\Actions\CreateAction;
-use Filament\Resources\Pages\ListRecords;
+use Filament\Resources\Pages\ManageRecords;
 
-class ListAnnouncements extends ListRecords
+class ListAnnouncements extends ManageRecords
 {
     protected static string $resource = AnnouncementResource::class;
 

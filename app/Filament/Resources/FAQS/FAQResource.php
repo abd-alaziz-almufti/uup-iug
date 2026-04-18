@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\FAQS;
 
-use App\Filament\Resources\FAQS\Pages\CreateFAQ;
-use App\Filament\Resources\FAQS\Pages\EditFAQ;
 use App\Filament\Resources\FAQS\Pages\ListFAQS;
 use App\Filament\Resources\FAQS\Schemas\FAQForm;
 use App\Filament\Resources\FAQS\Tables\FAQSTable;
@@ -57,8 +55,6 @@ class FAQResource extends Resource
     {
         return [
             'index' => ListFAQS::route('/'),
-            'create' => CreateFAQ::route('/create'),
-            'edit' => EditFAQ::route('/{record}/edit'),
         ];
     }
 }
