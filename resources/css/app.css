@@ -1,11 +1,165 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
-@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
-@source '../../storage/framework/views/*.php';
-@source '../**/*.blade.php';
-@source '../**/*.js';
+/* ============================================================
+   UUP-IUG Design System — extracted from Figma
+   ============================================================ */
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
+  /* ── Colors ── */
+  --color-primary: #01a0e2;
+  --color-secondary: #008423;
+  --color-accent: #007bff;
+  --color-text: #000000;
+  --color-white: #ffffff;
+  --color-card-border: #d8d8d8;
+
+  /* Gradient stops */
+  --color-gradient-start: #a3c1ec;
+  --color-gradient-mid: #afc9f2;
+  --color-gradient-end: #b1c9ee;
+
+  /* Overlay colors */
+  --color-overlay-blue: rgba(0, 123, 255, 0.5);
+  --color-overlay-white: rgba(255, 255, 255, 0.5);
+
+  /* ── Typography ── */
+  --font-cairo: "Cairo", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-tajawal: "Tajawal", sans-serif;
+
+  --text-heading: 30px;
+  --text-subtitle: 18px;
+  --text-label: 12px;
+
+  /* ── Border Radius ── */
+  --radius-card: 32px;
+  --radius-button: 8px;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.25);
+  --shadow-bar: 0 4px 4px rgba(0, 0, 0, 0.25);
+  --shadow-glow-blue: 0 0 10px rgba(0, 123, 255, 0.25);
+
+  /* ── Sizing ── */
+  --spacing-card-w: 318px;
+  --spacing-card-h: 300px;
+  --spacing-gutter: 20px;
+  --spacing-icon-circle: 120px;
+}
+
+/* ── CSS Custom Properties (available everywhere) ── */
+:root {
+  /* Brand colors */
+  --uup-primary: #01a0e2;
+  --uup-secondary: #008423;
+  --uup-accent: #007bff;
+  --uup-text: #000000;
+  --uup-white: #ffffff;
+  --uup-card-border: #d8d8d8;
+
+  /* Background gradient */
+  --uup-gradient: linear-gradient(90deg, #a3c1ec 0%, #afc9f2 49%, #b1c9ee 100%);
+
+  /* Overlays */
+  --uup-overlay-blue: rgba(0, 123, 255, 0.5);
+  --uup-overlay-white: rgba(255, 255, 255, 0.5);
+
+  /* Font stacks */
+  --uup-font-primary: "Cairo", sans-serif;
+  --uup-font-secondary: "Inter", sans-serif;
+
+  /* Shadows */
+  --uup-shadow-card: 0 4px 10px rgba(0, 0, 0, 0.25);
+  --uup-shadow-bar: 0 4px 4px rgba(0, 0, 0, 0.25);
+  --uup-shadow-glow: 0 0 10px rgba(0, 123, 255, 0.25);
+}
+
+/* ── Base Styles ── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  font-family: "Tajawal", sans-serif;
+  color: #000000;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: "Tajawal", sans-serif;
+  background: #f0f7ff;
+}
+
+/* ── Scrollbar styling ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 999px;
+}
+
+/* ── App layout helpers ── */
+.layout-shell {
+  display: flex;
+  align-items: stretch;
+  min-height: 100vh;
+  width: 100%;
+  direction: rtl;
+  overflow-x: hidden;
+}
+
+.layout-sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  height: 100vh;
+  min-height: 100vh;
+}
+
+.layout-main {
+  flex: 1 1 0%;
+  min-width: 0;
+}
+
+@media (min-width: 1024px) {
+  .layout-main {
+    margin-right: 320px;
+  }
+}
+
+/* Student dashboard content responsiveness */
+.dashboard-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.dashboard-content .dashboard-card-image {
+  max-width: none;
+  height: 100%;
+}
+
+/* إخفاء النص فقط عندما تكون الشاشة بين 767 و 954 بيكسل */
+@media (min-width: 767px) and (max-width: 954px) {
+  .dashboard-subtitle {
+    display: none !important;
+  }
 }

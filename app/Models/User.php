@@ -32,7 +32,18 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(Panel $panel): bool
     {
-        return ! $this->hasRole('Student'); // Prevent students from accessing the admin dashboard
+        // Allow super admins to anything
+        if ($this->hasRole(['super_admin', 'Super Admin'])) {
+            return true;
+        }
+
+        // Prevent students from accessing the admin dashboard
+        if ($this->hasRole('Student')) {
+            return false;
+        }
+
+        // Default allow for other staff roles (Support Agent, Admission, etc.)
+        return true;
     }
     /**
      * The attributes that should be hidden for serialization.
