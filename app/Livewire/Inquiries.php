@@ -22,6 +22,7 @@ class Inquiries extends Component
     public $category = 'أخرى';
     public $title = '';
     public $subject = '';
+    public $course_id = '';
     public $attachment;
 
     public function mount()
@@ -54,17 +55,58 @@ class Inquiries extends Component
                 "status" => in_array($ticket->status, ['open', 'in_progress']) ? 'قيد المتابعة' : 'مغلق',
                 "openedAt" => $ticket->created_at->format('d/m/Y'),
                 "closedAt" => in_array($ticket->status, ['resolved', 'closed']) ? $ticket->updated_at->format('d/m/Y') : '--/--/----',
-                "subject" => $ticket->content ?? 'لا يوجد تفاصيل',
+                "subject" => $ticket->content ?? $ticket->replies->first()?->reply_text ?? 'لا يوجد تفاصيل',
                 "replies" => $ticket->replies->map(function ($reply) {
                     return [
                         "id" => $reply->id,
                         "author" => $reply->user ? $reply->user->name : 'الدعم',
-                        "message" => $reply->message,
+                        "message" => $reply->reply_text,
                         "created_at" => $reply->created_at->format('d/m/Y H:i'),
                     ];
                 })->toArray(),
             ];
         })->toArray();
+    }
+
+    #[Computed]
+    public function studentCourses()
+    {
+        if (!auth()->check()) return collect();
+        
+        return \App\Models\Course::whereHas('enrollments', function ($query) {
+            $query->where('student_id', auth()->id());
+        })->get(['id', 'name']);
+    }
+
+    #[Computed]
+    public function availableTargetTypes()
+    {
+        if (!$this->department_id) return [];
+
+        $dept = Department::find($this->department_id);
+        if (!$dept) return [];
+
+        $types = [];
+
+        if (str_contains($dept->name, 'كلية')) {
+            $types = [
+                ['value' => 'supervisor', 'label' => 'المشرف الأكاديمي'],
+                ['value' => 'dean', 'label' => 'عميد الكلية'],
+                ['value' => 'instructor', 'label' => 'مدرس المادة'],
+            ];
+        } elseif (str_contains($dept->name, 'القبول')) {
+            $types = [
+                ['value' => 'admission', 'label' => 'موظف القبول والتسجيل'],
+            ];
+        } else {
+            // Default for other departments
+            $types = [
+                ['value' => 'supervisor', 'label' => 'رئيس الدائرة'],
+                ['value' => 'instructor', 'label' => 'موظف مختص'],
+            ];
+        }
+
+        return $types;
     }
 
     #[Computed]
@@ -81,12 +123,17 @@ class Inquiries extends Component
     public function openCreateModal()
     {
         $this->resetValidation();
-        $this->reset(['title', 'subject', 'department_id', 'targetType', 'attachment']);
+        $this->reset(['title', 'subject', 'department_id', 'targetType', 'course_id', 'attachment']);
         
         // Auto-select first department if available
         $firstDept = $this->departmentsList->first();
         if ($firstDept) {
             $this->department_id = $firstDept->id;
+            // Set default target type from available ones
+            $available = $this->availableTargetTypes;
+            if (count($available) > 0) {
+                $this->targetType = $available[0]['value'];
+            }
         }
 
         if (auth()->check()) {
@@ -98,32 +145,37 @@ class Inquiries extends Component
 
     public function createTicket()
     {
-        $this->validate([
+        $rules = [
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
             'department_id' => 'required',
             'category' => 'required',
-        ], [
+            'targetType' => 'required',
+        ];
+
+        if ($this->targetType === 'instructor') {
+            $rules['course_id'] = 'required';
+        }
+
+        $this->validate($rules, [
             'title.required' => 'يرجى إدخال عنوان التذكرة',
             'subject.required' => 'يرجى إدخال موضوع التذكرة',
             'department_id.required' => 'يرجى اختيار الجهة المرسل إليها',
             'category.required' => 'يرجى اختيار التصنيف',
+            'course_id.required' => 'يرجى اختيار المادة الدراسية',
         ]);
 
         try {
             $ticket = Ticket::create([
                 'title' => $this->title,
+                'content' => $this->subject,
                 'category' => $this->category,
                 'department_id' => (int)$this->department_id,
                 'target_type' => $this->targetType,
+                'course_id' => $this->targetType === 'instructor' ? (int)$this->course_id : null,
                 'status' => 'open',
                 'priority' => 'medium',
                 'student_id' => (int)auth()->id(),
-            ]);
-
-            $ticket->replies()->create([
-                'user_id' => auth()->id(),
-                'reply_text' => $this->subject,
             ]);
 
             $this->showCreateModal = false;
@@ -135,6 +187,16 @@ class Inquiries extends Component
         } catch (\Exception $e) {
             \Log::error('Inquiries Create Error: ' . $e->getMessage());
             session()->flash('error', 'فشل الحفظ: ' . $e->getMessage());
+        }
+    }
+
+    public function updatedDepartmentId($value)
+    {
+        $available = $this->availableTargetTypes;
+        if (count($available) > 0) {
+            $this->targetType = $available[0]['value'];
+        } else {
+            $this->targetType = '';
         }
     }
 

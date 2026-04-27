@@ -105,10 +105,19 @@
         </div>
 
         <div class="mt-3 rounded-[10px] bg-[#b1c9ee] px-4 py-3">
-            <p class="font-tajawal text-sm font-bold text-black">ملاحظات المشرف :</p>
-            <p class="mt-3 text-xs font-medium text-black">
-                لم يضف المشرف اي ملاحظات بعد يرجى المراجعة لاحقاً
-            </p>
+            <p class="font-tajawal text-sm font-bold text-black">ملاحظات المشرف والردود :</p>
+            @forelse($selectedTicket['replies'] ?? [] as $reply)
+                <div class="mt-3 border-b border-white pb-3 last:border-0">
+                    <p class="text-[10px] font-bold text-blue-800">{{ $reply['author'] }} - {{ $reply['created_at'] }}</p>
+                    <p class="mt-1 text-xs font-medium text-black">
+                        {{ $reply['message'] }}
+                    </p>
+                </div>
+            @empty
+                <p class="mt-3 text-xs font-medium text-black">
+                    لم يضف المشرف اي ملاحظات بعد يرجى المراجعة لاحقاً
+                </p>
+            @endforelse
         </div>
     </div>
 
@@ -209,13 +218,35 @@
                         </div>
                         <div class="relative">
                             <select wire:model.live="targetType" class="w-full appearance-none rounded-xl border border-[#c9d9f5] bg-[#bcd2f3] px-10 py-2.5 text-right text-sm font-semibold text-[#0f172a] shadow-inner outline-none">
-                                <option value="supervisor">المشرف الأكاديمي</option>
-                                <option value="dean">عميد الكلية</option>
-                                <option value="instructor">مدرس المادة</option>
+                                @forelse($this->availableTargetTypes as $type)
+                                    <option value="{{ $type['value'] }}">{{ $type['label'] }}</option>
+                                @empty
+                                    <option value="">يرجى اختيار القسم أولاً</option>
+                                @endforelse
                             </select>
                             <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[#2b6de9]">▼</span>
                         </div>
                     </div>
+
+                    <!-- Select Course (Visible only if target is instructor) -->
+                    @if($targetType === 'instructor')
+                    <div class="space-y-2" x-transition>
+                        <div class="flex flex-row-reverse items-center justify-end gap-2 text-right">
+                            <span class="font-tajawal text-sm font-bold text-[#0f172a]">المادة الدراسية</span>
+                            <span class="h-5 w-1 rounded-full bg-[#0f6ff2]"></span>
+                        </div>
+                        <div class="relative">
+                            <select wire:model.live="course_id" class="w-full appearance-none rounded-xl border border-[#c9d9f5] bg-[#bcd2f3] px-10 py-2.5 text-right text-sm font-semibold text-[#0f172a] shadow-inner outline-none">
+                                <option value="">اختر المادة...</option>
+                                @foreach($this->studentCourses as $course)
+                                <option value="{{ $course->id }}">{{ $course->name }}</option>
+                                @endforeach
+                            </select>
+                            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[#2b6de9]">▼</span>
+                        </div>
+                        @error('course_id') <span class="text-xs text-red-500">{{ $message }}</span> @enderror
+                    </div>
+                    @endif
 
                     <!-- Title -->
                     <div class="space-y-2">

@@ -10,7 +10,7 @@ class GuidanceInformation extends Component
     #[Computed]
     public function getTopics()
     {
-        return \App\Models\FAQ::all()->map(function($faq) {
+        return \App\Models\FAQ::where('status', 'published')->get()->map(function($faq) {
             return [
                 "id" => $faq->id,
                 "question" => $faq->question,

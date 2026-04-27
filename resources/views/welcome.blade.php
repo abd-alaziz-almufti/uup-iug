@@ -20,10 +20,14 @@
                 </div>
 
                 <nav class="hidden items-center gap-4 lg:flex xl:gap-6">
-                    <a href="#" class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الرئيسية</a>
-                    <a href="#" class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">عن المنصة</a>
-                    <a href="#" class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الاسئلة الشائعة</a>
-                    <a href="#" class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">تواصل معنا</a>
+                    <a href="#" 
+                        class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الرئيسية</a>
+                    <a href="#" 
+                        class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">عن المنصة</a>
+                    <a href="#"
+                        class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الاسئلة الشائعة</a>
+                    <a href="#" 
+                        class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">تواصل معنا</a>
                 </nav>
 
                 <div class="flex items-center gap-3 lg:hidden">

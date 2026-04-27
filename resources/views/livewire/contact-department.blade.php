@@ -82,7 +82,7 @@
                 <!-- Contacts Grid -->
                 <div class="flex-1 overflow-y-auto bg-[#cfe4ff] p-6 custom-scrollbar">
                     <div class="grid grid-cols-1 gap-5 md:grid-cols-2">
-                        <template x-for="contact in (activeDept ? activeDept.contacts : [])" :key="contact.name">
+                        <template x-for="contact in (activeDept ? activeDept.contacts : [])" :key="contact.id">
                             <div
                                 class="rounded-[22px] border border-white/60 bg-[#c7ddf9] p-5 shadow-[0_8px_16px_rgba(0,0,0,0.05)] transition-all hover:shadow-[0_12px_24px_rgba(0,0,0,0.08)]"
                             >

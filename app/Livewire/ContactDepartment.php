@@ -2,14 +2,16 @@
 
 namespace App\Livewire;
 
+use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 class ContactDepartment extends Component
 {
-    #[Computed]
-    public function getDepartmentsData()
+    #[Computed()]  // computed property خاصية محسوبة
+    public function getDepartmentsData()  // ترجع بيانات جاهزة للاستخدام للفرونت
     {
         // Eager load contacts to avoid N+1 and get all data for dynamic Alpine modal
+        // بدون with راح يصير  N+1 proplem وكل department بيعمل query لحاله
         return \App\Models\Department::with('contacts')->get()->map(function ($dept) {
             return [
                 "id" => $dept->id,
@@ -23,7 +25,7 @@ class ContactDepartment extends Component
                         "phone" => $contact->phone ?? "00970-59XXXXXXX",
                         "email" => $contact->email ?? "public5@iugaza.edu.ps",
                     ];
-                })->toArray(),
+                })->toArray(),  // عشان يحول الcllection to array / مهم لانه Livewire & Alpine & Json تحتاج Array
             ];
         })->toArray();
     }
