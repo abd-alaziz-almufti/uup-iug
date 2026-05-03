@@ -115,7 +115,7 @@ class TicketResource extends Resource
     // ✅ Badge عدد التذاكر المفتوحة
     public static function getNavigationBadge(): ?string
     {
-        return static::getModel()::where('status', 'open')->count();
+        return static::getEloquentQuery()->where('status', 'open')->count();
     }
 
     public static function getNavigationBadgeColor(): ?string

@@ -38,7 +38,6 @@ class TicketForm
                             ->label('المادة الدراسية')
                             ->relationship('course', 'name')
                             ->searchable()
-                            ->preload()
                             ->required()
                             ->visible(fn (\Filament\Schemas\Components\Utilities\Get $get) => $get('target_type') === 'instructor'),
 
@@ -89,7 +88,6 @@ class TicketForm
                             ->label('الطالب')
                             ->relationship('student', 'name')
                             ->searchable()
-                            ->preload()
                             ->required(),
 
                         Select::make('department_id')
