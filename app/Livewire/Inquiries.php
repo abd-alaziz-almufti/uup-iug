@@ -73,9 +73,11 @@ class Inquiries extends Component
     {
         if (!auth()->check()) return collect();
         
-        return \App\Models\Course::whereHas('enrollments', function ($query) {
-            $query->where('student_id', auth()->id());
-        })->get(['id', 'name']);
+        return \Illuminate\Support\Facades\Cache::remember('student_courses_' . auth()->id(), 60 * 60 * 24, function () {
+            return \App\Models\Course::whereHas('enrollments', function ($query) {
+                $query->where('student_id', auth()->id());
+            })->get(['id', 'name']);
+        });
     }
 
     #[Computed]
@@ -83,7 +85,7 @@ class Inquiries extends Component
     {
         if (!$this->department_id) return [];
 
-        $dept = Department::find($this->department_id);
+        $dept = $this->departmentsList->firstWhere('id', $this->department_id);
         if (!$dept) return [];
 
         $types = [];
@@ -112,7 +114,9 @@ class Inquiries extends Component
     #[Computed]
     public function departmentsList()
     {
-        return Department::all(['id', 'name']);
+        return \Illuminate\Support\Facades\Cache::rememberForever('departments_list', function () {
+            return Department::all(['id', 'name']);
+        });
     }
 
     public function selectTicket($id)

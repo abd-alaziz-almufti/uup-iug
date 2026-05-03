@@ -32,4 +32,15 @@ class Contact extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($contact) {
+            \Illuminate\Support\Facades\Cache::forget('departments_contacts');
+        });
+
+        static::deleted(function ($contact) {
+            \Illuminate\Support\Facades\Cache::forget('departments_contacts');
+        });
+    }
 }

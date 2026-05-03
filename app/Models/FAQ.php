@@ -20,6 +20,17 @@ class FAQ extends Model
     public const STATUS_PUBLISHED = 'published';
     public const STATUS_REJECTED = 'rejected';
 
+    protected static function booted()
+    {
+        static::saved(function ($faq) {
+            \Illuminate\Support\Facades\Cache::forget('published_faqs');
+        });
+
+        static::deleted(function ($faq) {
+            \Illuminate\Support\Facades\Cache::forget('published_faqs');
+        });
+    }
+
     /**
      * المادة الدراسية (لو السؤال خاص بمادة)
      */
@@ -43,4 +54,6 @@ class FAQ extends Model
     {
         return $query->whereNotNull('course_id');
     }
+
+
 }

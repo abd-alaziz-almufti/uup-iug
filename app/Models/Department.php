@@ -59,4 +59,17 @@ class Department extends Model
     {
         return $this->hasMany(Course::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($department) {
+            \Illuminate\Support\Facades\Cache::forget('departments_contacts');
+            \Illuminate\Support\Facades\Cache::forget('departments_list');
+        });
+
+        static::deleted(function ($department) {
+            \Illuminate\Support\Facades\Cache::forget('departments_contacts');
+            \Illuminate\Support\Facades\Cache::forget('departments_list');
+        });
+    }
 }

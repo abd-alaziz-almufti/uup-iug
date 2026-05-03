@@ -10,14 +10,12 @@ class GuidanceInformation extends Component
     #[Computed]
     public function getTopics()
     {
-        return \App\Models\FAQ::where('status', 'published')->get()->map(function($faq) {
-            return [
-                "id" => $faq->id,
-                "question" => $faq->question,
-                "answer" => $faq->answer,
-                "category" => $faq->category,
-            ];
-        })->toArray();
+        return \Illuminate\Support\Facades\Cache::rememberForever('published_faqs', function () {
+            return \App\Models\FAQ::select('id', 'question', 'answer', 'category')
+                ->where('status', 'published')
+                ->get()
+                ->toArray();
+        });
     }
 
     public function render()

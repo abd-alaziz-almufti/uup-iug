@@ -28,4 +28,15 @@ class StudentEnrollment extends Model
     {
         return $this->belongsTo(Course::class);
     }
+
+    protected static function booted()
+    {
+        static::saved(function ($enrollment) {
+            \Illuminate\Support\Facades\Cache::forget('student_courses_' . $enrollment->student_id);
+        });
+
+        static::deleted(function ($enrollment) {
+            \Illuminate\Support\Facades\Cache::forget('student_courses_' . $enrollment->student_id);
+        });
+    }
 }
