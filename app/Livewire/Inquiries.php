@@ -42,30 +42,38 @@ class Inquiries extends Component
             return [];
         }
 
-        $tickets = Ticket::with(['department', 'replies.user', 'course'])
-            ->where('student_id', auth()->id())
-            ->latest()
-            ->get();
+        $cacheKey = 'student_tickets_' . auth()->id();
+        
+        return \Illuminate\Support\Facades\Cache::remember($cacheKey, 300, function () { // 5 minutes TTL
+            $tickets = Ticket::with([
+                'department:id,name', 
+                'replies.user:id,name', 
+                'course:id,name'
+            ])
+                ->where('student_id', auth()->id())
+                ->latest()
+                ->get();
 
-        return $tickets->map(function ($ticket) {
-            return [
-                "id" => $ticket->ticket_code ?? $ticket->id,
-                "title" => $ticket->title,
-                "target" => $ticket->department ? $ticket->department->name : 'بدون قسم',
-                "status" => in_array($ticket->status, ['open', 'in_progress']) ? 'قيد المتابعة' : 'مغلق',
-                "openedAt" => $ticket->created_at->format('d/m/Y'),
-                "closedAt" => in_array($ticket->status, ['resolved', 'closed']) ? $ticket->updated_at->format('d/m/Y') : '--/--/----',
-                "subject" => $ticket->content ?? $ticket->replies->first()?->reply_text ?? 'لا يوجد تفاصيل',
-                "replies" => $ticket->replies->map(function ($reply) {
-                    return [
-                        "id" => $reply->id,
-                        "author" => $reply->user ? $reply->user->name : 'الدعم',
-                        "message" => $reply->reply_text,
-                        "created_at" => $reply->created_at->format('d/m/Y H:i'),
-                    ];
-                })->toArray(),
-            ];
-        })->toArray();
+            return $tickets->map(function ($ticket) {
+                return [
+                    "id" => $ticket->ticket_code ?? $ticket->id,
+                    "title" => $ticket->title,
+                    "target" => $ticket->department ? $ticket->department->name : 'بدون قسم',
+                    "status" => in_array($ticket->status, ['open', 'in_progress']) ? 'قيد المتابعة' : 'مغلق',
+                    "openedAt" => $ticket->created_at->format('d/m/Y'),
+                    "closedAt" => in_array($ticket->status, ['resolved', 'closed']) ? $ticket->updated_at->format('d/m/Y') : '--/--/----',
+                    "subject" => $ticket->content ?? $ticket->replies->first()?->reply_text ?? 'لا يوجد تفاصيل',
+                    "replies" => $ticket->replies->map(function ($reply) {
+                        return [
+                            "id" => $reply->id,
+                            "author" => $reply->user ? $reply->user->name : 'الدعم',
+                            "message" => $reply->reply_text,
+                            "created_at" => $reply->created_at->format('d/m/Y H:i'),
+                        ];
+                    })->toArray(),
+                ];
+            })->toArray();
+        });
     }
 
     #[Computed]
@@ -90,13 +98,14 @@ class Inquiries extends Component
 
         $types = [];
 
-        if (str_contains($dept->name, 'كلية')) {
+        // استخدام حقل type بدلاً من اسم القسم لمرونة أعلى
+        if ($dept->type === 'academic' || $dept->type === 'faculty') {
             $types = [
                 ['value' => 'supervisor', 'label' => 'المشرف الأكاديمي'],
                 ['value' => 'dean', 'label' => 'عميد الكلية'],
                 ['value' => 'instructor', 'label' => 'مدرس المادة'],
             ];
-        } elseif (str_contains($dept->name, 'القبول')) {
+        } elseif ($dept->type === 'admission') {
             $types = [
                 ['value' => 'admission', 'label' => 'موظف القبول والتسجيل'],
             ];
@@ -115,7 +124,7 @@ class Inquiries extends Component
     public function departmentsList()
     {
         return \Illuminate\Support\Facades\Cache::rememberForever('departments_list', function () {
-            return Department::all(['id', 'name']);
+            return Department::all(['id', 'name', 'type']); // جلب حقل type
         });
     }
 
@@ -140,10 +149,6 @@ class Inquiries extends Component
             }
         }
 
-        if (auth()->check()) {
-            session()->flash('debug_auth', 'جاري الإنشاء للمستخدم رقم: ' . auth()->id());
-        }
-
         $this->showCreateModal = true;
     }
 
@@ -152,13 +157,13 @@ class Inquiries extends Component
         $rules = [
             'title' => 'required|string|max:255',
             'subject' => 'required|string',
-            'department_id' => 'required',
+            'department_id' => 'required|exists:departments,id',
             'category' => 'required',
             'targetType' => 'required',
         ];
 
         if ($this->targetType === 'instructor') {
-            $rules['course_id'] = 'required';
+            $rules['course_id'] = 'required|exists:courses,id';
         }
 
         $this->validate($rules, [
@@ -185,12 +190,14 @@ class Inquiries extends Component
             $this->showCreateModal = false;
             $this->selectedId = $ticket->ticket_code;
             
+            \Illuminate\Support\Facades\Cache::forget('student_tickets_' . auth()->id());
             unset($this->tickets);
+            
             session()->flash('message', 'تم إنشاء التذكرة بنجاح برقم: ' . $ticket->ticket_code);
             
         } catch (\Exception $e) {
             \Log::error('Inquiries Create Error: ' . $e->getMessage());
-            session()->flash('error', 'فشل الحفظ: ' . $e->getMessage());
+            session()->flash('error', 'عذراً، حدث خطأ أثناء حفظ التذكرة، يرجى المحاولة لاحقاً.'); // رسالة آمنة للمستخدم
         }
     }
 

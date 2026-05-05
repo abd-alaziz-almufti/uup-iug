@@ -38,6 +38,18 @@ class TicketReply extends Model
                 }
             }
         });
+
+        static::saved(function ($reply) {
+            if ($reply->ticket) {
+                \Illuminate\Support\Facades\Cache::forget('student_tickets_' . $reply->ticket->student_id);
+            }
+        });
+
+        static::deleted(function ($reply) {
+            if ($reply->ticket) {
+                \Illuminate\Support\Facades\Cache::forget('student_tickets_' . $reply->ticket->student_id);
+            }
+        });
     }
 
     /**

@@ -119,11 +119,11 @@
                                 <button 
                                     type="button" 
                                     @if($card['id']) wire:click="setSection('{{ $card['id'] }}')" @endif
-                                    class="relative mx-auto h-[230px] w-full max-w-[440px] overflow-hidden rounded-[26px] border border-[#d8d8d8] shadow-[0_4px_10px_rgba(0,0,0,0.25)] md:h-[220px] md:max-w-none xl:h-[250px]"
+                                    class="group relative mx-auto h-[230px] w-full max-w-[440px] overflow-hidden rounded-[26px] border border-[#d8d8d8] shadow-[0_4px_10px_rgba(0,0,0,0.25)] transition-all duration-300 hover:scale-105 hover:shadow-[0_8px_25px_rgba(0,123,255,0.4)] md:h-[220px] md:max-w-none xl:h-[250px]"
                                 >
-                                    <img src="{{ asset($card['image']) }}" alt="{{ $card['label'] }}" class="dashboard-card-image absolute inset-0 h-full w-full object-cover" />
-                                    <div class="absolute bottom-0 left-0 right-0 h-[78px] border border-[#d8d8d8] bg-[#007bff]/50 md:h-[78px] xl:h-[86px]"></div>
-                                    <div class="absolute bottom-4 left-0 right-0 flex items-center justify-center md:bottom-5 xl:bottom-6">
+                                    <img src="{{ asset($card['image']) }}" alt="{{ $card['label'] }}" class="dashboard-card-image absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                                    <div class="absolute bottom-0 left-0 right-0 h-[78px] border border-[#d8d8d8] bg-[#007bff]/50 transition-colors duration-300 group-hover:bg-[#0056b3]/70 md:h-[78px] xl:h-[86px]"></div>
+                                    <div class="absolute bottom-4 left-0 right-0 flex items-center justify-center transition-transform duration-300 group-hover:-translate-y-1 md:bottom-5 xl:bottom-6">
                                         <span class="font-tajawal text-lg font-semibold text-white md:text-xl">{{ $card['label'] }}</span>
                                     </div>
                                 </button>

@@ -3,6 +3,7 @@
 namespace App\Livewire\Auth;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class LoginModal extends Component
@@ -14,20 +15,28 @@ class LoginModal extends Component
     public function login()
     {
         $this->validate([
-            'username' => 'required',
-            'password' => 'required',
+            'username' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        // نتحقق إذا كان الإدخال عبارة عن إيميل، وإلا نعتبره "email" افتراضياً لتجنب خطأ الداتابيز
-        // ملاحظة: إذا أضفت حقل student_id في جدول users لاحقاً عبر migration، يمكنك تغيير الكود ليتعرف عليه
-        $field = filter_var($this->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'email';
+        $throttleKey = strtolower($this->username) . '|' . request()->ip();
+
+        // حماية من محاولات التخمين (Rate Limiting) - 5 محاولات في الدقيقة
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $this->addError('username', "محاولات كثيرة جداً. الرجاء المحاولة بعد {$seconds} ثانية.");
+            return;
+        }
+
+        // تحديد ما إذا كان المدخل بريد إلكتروني أم رقم جامعي
+        $field = filter_var($this->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'university_id';
 
         if (Auth::attempt([$field => $this->username, 'password' => $this->password], $this->remember)) {
-            
-            // Redirect to dashboard on success
+            RateLimiter::clear($throttleKey);
             return redirect()->intended('/dashboard');
         }
 
+        RateLimiter::hit($throttleKey);
         $this->addError('username', 'بيانات الدخول غير صحيحة');
     }
 

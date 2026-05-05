@@ -157,5 +157,13 @@ class Ticket extends Model
                 }
             }
         });
+
+        static::saved(function ($ticket) {
+            \Illuminate\Support\Facades\Cache::forget('student_tickets_' . $ticket->student_id);
+        });
+
+        static::deleted(function ($ticket) {
+            \Illuminate\Support\Facades\Cache::forget('student_tickets_' . $ticket->student_id);
+        });
     }
 }
