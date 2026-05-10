@@ -11,6 +11,15 @@ class LoginModal extends Component
     public $username = '';
     public $password = '';
     public $remember = false;
+    public $showForgotPassword = false;
+    public $recoveryId = '';
+    public $recoveryMethod = 'email';
+
+    public function toggleForgotPassword($status = null)
+    {
+        $this->showForgotPassword = $status ?? !$this->showForgotPassword;
+        $this->resetErrorBag();
+    }
 
     public function login()
     {

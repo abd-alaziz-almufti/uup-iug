@@ -9,3 +9,5 @@ Route::get('/', function () {
 Route::get('/dashboard', \App\Livewire\StudentDashboard::class)
     ->name('dashboard')
     ->middleware('auth');
+
+Route::view('/register', 'register')->name('register');

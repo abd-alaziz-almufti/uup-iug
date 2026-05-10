@@ -157,7 +157,7 @@
                                 <h2 class="font-tajawal text-lg font-bold text-[#0f172a]">مركز الإرشاد</h2>
                                 <button type="button" wire:click="setSection('home')" class="rounded-xl bg-[#0056b3] px-4 py-2 font-tajawal text-sm font-bold text-white hover:bg-[#004a99]">اغلاق</button>
                             </div>
-                            <livewire:guidance-information />
+                            <livewire:guidance-center />
                         </div>
                     @endif
 

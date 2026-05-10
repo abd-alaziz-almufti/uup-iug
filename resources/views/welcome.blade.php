@@ -98,12 +98,12 @@
                         </div>
                     </button>
                     <!-- دخول طالب جديد -->
-                    <button type="button" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg">
+                    <a href="{{ route('register') }}" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg">
                         <img src="{{ asset('دخول طالب جديد.png') }}" alt="دخول طالب جديد" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="pointer-events-none absolute bottom-0 left-0 flex h-[70px] w-full items-center justify-center bg-[#1f78d5]/72 backdrop-blur-sm">
                             <span class="font-tajawal text-[25px] font-bold text-white">دخول طالب جديد</span>
                         </div>
-                    </button>
+                    </a>
                     <!-- دخول أستاذ جامعي -->
                     <button type="button" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg">
                         <img src="{{ asset('دخول استاذ جامعي.png') }}" alt="دخول أستاذ جامعي" class="absolute inset-0 h-full w-full object-cover" />
