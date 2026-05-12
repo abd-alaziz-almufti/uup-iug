@@ -1,5 +1,10 @@
 <x-layouts.app>
-    <div x-data="{ showLogin: false, showMobileMenu: false }" class="flex min-h-screen w-full flex-col">
+    <div x-data="{ 
+        showLogin: false, 
+        showMobileMenu: false,
+        showDirectContact: false,
+        showTrackOrders: false
+    }" class="flex min-h-screen w-full flex-col">
         <!-- Top Navigation Header -->
         <header class="w-full bg-white/10 backdrop-blur-[1px]">
             <x-top-bar />
@@ -20,11 +25,11 @@
                 </div>
 
                 <nav class="hidden items-center gap-4 lg:flex xl:gap-6">
-                    <a href="#" 
+                    <a href="/" 
                         class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الرئيسية</a>
                     <a href="#" 
                         class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">عن المنصة</a>
-                    <a href="#"
+                    <a href="#faq"
                         class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">الاسئلة الشائعة</a>
                     <a href="#" 
                         class="whitespace-nowrap px-6 py-8 font-tajawal text-base font-bold text-gray-900 transition-all duration-300 hover:bg-[#178BFF] hover:text-white">تواصل معنا</a>
@@ -58,9 +63,9 @@
             <!-- Mobile Menu -->
             <div x-show="showMobileMenu" style="display: none;" class="border-t border-white/30 bg-white/70 px-4 py-4 backdrop-blur-md lg:hidden">
                 <nav class="flex flex-col items-start gap-3">
-                    <a href="#" class="font-tajawal text-base font-bold text-[#178BFF]" @click="showMobileMenu = false">الرئيسية</a>
+                    <a href="/" class="font-tajawal text-base font-bold text-[#178BFF]" @click="showMobileMenu = false">الرئيسية</a>
                     <a href="#" class="font-tajawal text-base text-gray-800" @click="showMobileMenu = false">عن المنصة</a>
-                    <a href="#" class="font-tajawal text-base text-gray-800" @click="showMobileMenu = false">الاسئلة الشائعة</a>
+                    <a href="#faq" class="font-tajawal text-base text-gray-800" @click="showMobileMenu = false">الاسئلة الشائعة</a>
                     <a href="#" class="font-tajawal text-base text-gray-800" @click="showMobileMenu = false">تواصل معنا</a>
                 </nav>
             </div>
@@ -88,7 +93,7 @@
                     <button 
                         type="button" 
                         @click="showLogin = true"
-                        class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg"
+                        class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg transition-transform hover:scale-[1.02]"
                     >
                         <img src="{{ asset('دخول طالب مسجل.png') }}" alt="دخول طالب مسجل" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="pointer-events-none absolute bottom-0 left-0 flex h-[70px] w-full items-center justify-center bg-[#1f78d5]/72 backdrop-blur-sm">
@@ -98,14 +103,14 @@
                         </div>
                     </button>
                     <!-- دخول طالب جديد -->
-                    <a href="{{ route('register') }}" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg">
+                    <a href="{{ route('register') }}" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg transition-transform hover:scale-[1.02]">
                         <img src="{{ asset('دخول طالب جديد.png') }}" alt="دخول طالب جديد" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="pointer-events-none absolute bottom-0 left-0 flex h-[70px] w-full items-center justify-center bg-[#1f78d5]/72 backdrop-blur-sm">
                             <span class="font-tajawal text-[25px] font-bold text-white">دخول طالب جديد</span>
                         </div>
                     </a>
                     <!-- دخول أستاذ جامعي -->
-                    <button type="button" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg">
+                    <button type="button" class="relative h-[230px] w-full max-w-[340px] cursor-pointer overflow-hidden rounded-[24px] shadow-lg transition-transform hover:scale-[1.02]">
                         <img src="{{ asset('دخول استاذ جامعي.png') }}" alt="دخول أستاذ جامعي" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="pointer-events-none absolute bottom-0 left-0 flex h-[70px] w-full items-center justify-center bg-[#1f78d5]/72 backdrop-blur-sm">
                             <span class="font-tajawal text-[25px] font-bold text-white">دخول أستاذ جامعي</span>
@@ -119,41 +124,160 @@
                 </h3>
 
                 <div class="mb-12 grid w-full max-w-[1120px] grid-cols-2 justify-items-center gap-6 lg:grid-cols-4">
+                    <!-- نقطة دخول موحدة -->
                     <div class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md">
                         <img src="{{ asset('نقطة دخول موحدة.png') }}" alt="نقطة دخول موحدة" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="absolute bottom-0 left-0 flex h-14 w-full items-center justify-center bg-[#1f78d5]/70 px-2 backdrop-blur-sm">
                             <span class="text-center font-tajawal text-base font-bold text-white">نقطة دخول موحدة</span>
                         </div>
                     </div>
-                    <div class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md">
+                    
+                    <!-- تواصل مباشر مع الأقسام -->
+                    <button 
+                        @click="showDirectContact = true"
+                        class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md transition-transform hover:scale-105"
+                    >
                         <img src="{{ asset('تواصل مباشر مع الاقسام.png') }}" alt="تواصل مباشر مع الأقسام" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="absolute bottom-0 left-0 flex h-14 w-full items-center justify-center bg-[#1f78d5]/70 px-2 backdrop-blur-sm">
                             <span class="text-center font-tajawal text-base font-bold text-white">تواصل مباشر مع الأقسام</span>
                         </div>
-                    </div>
-                    <div class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md">
+                    </button>
+
+                    <!-- دعم الطلبة الجدد -->
+                    <a 
+                        href="{{ route('register') }}"
+                        class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md transition-transform hover:scale-105"
+                    >
                         <img src="{{ asset('دعم الطلبة الجدد.png') }}" alt="دعم الطلبة الجدد" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="absolute bottom-0 left-0 flex h-14 w-full items-center justify-center bg-[#1f78d5]/70 px-2 backdrop-blur-sm">
                             <span class="text-center font-tajawal text-base font-bold text-white">دعم الطلبة الجدد</span>
                         </div>
-                    </div>
-                    <div class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md">
+                    </a>
+
+                    <!-- متابعة الطلبات إلكترونيا -->
+                    <button 
+                        @click="showTrackOrders = true"
+                        class="relative h-[190px] w-full max-w-[250px] overflow-hidden rounded-[22px] shadow-md transition-transform hover:scale-105"
+                    >
                         <img src="{{ asset('متابعة الطلبات.png') }}" alt="متابعة الطلبات إلكترونيا" class="absolute inset-0 h-full w-full object-cover" />
                         <div class="absolute bottom-0 left-0 flex h-14 w-full items-center justify-center bg-[#1f78d5]/70 px-2 backdrop-blur-sm">
                             <span class="text-center font-tajawal text-base font-bold text-white">متابعة الطلبات إلكترونيا</span>
                         </div>
-                    </div>
+                    </button>
                 </div>
 
                 <!-- Guidance Information Livewire Component -->
-                <livewire:guidance-information />
+                <div id="faq" class="w-full flex justify-center">
+                    <livewire:guidance-information />
+                </div>
 
             </div>
         </main>
 
         <x-footer />
 
-        <!-- Login Modal component (with alpine state managed by parent) -->
+        <!-- Login Modal component -->
         <livewire:auth.login-modal />
+
+        <!-- Direct Contact Modal -->
+        <div 
+            x-show="showDirectContact" 
+            x-transition.opacity
+            style="display: none;"
+            class="fixed inset-0 z-[120] flex items-center justify-center px-4 py-8 bg-[#0f172a]/40 backdrop-blur-sm"
+            @click="showDirectContact = false"
+        >
+            <div 
+                class="relative w-full max-w-[900px] overflow-hidden rounded-[20px] bg-[#cfe3ff] shadow-[0_0_100px_rgba(0,0,0,0.25)]"
+                @click.stop
+            >
+                <div class="h-5 w-full bg-[#007BFF]"></div>
+                <button 
+                    @click="showDirectContact = false"
+                    class="absolute left-4 top-8 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-2xl font-bold text-[#007BFF] transition-colors hover:bg-white"
+                >
+                    ×
+                </button>
+
+                <div class="flex flex-col items-center px-6 pb-12 pt-10 text-center">
+                    <div class="flex h-32 w-32 items-center justify-center rounded-full bg-white/70 shadow-sm">
+                        <img src="{{ asset('logo2.png') }}" alt="IUG Logo" class="h-24 w-24 object-contain" />
+                    </div>
+
+                    <h3 class="mt-8 font-tajawal text-[32px] font-bold text-black/80">
+                        تواصل مباشرة مع الأقسام
+                    </h3>
+                    <p class="mt-5 max-w-2xl font-tajawal text-lg font-semibold text-black/70 leading-relaxed">
+                        من خلال ميزة التواصل المباشر مع الأقسام يتيح لك الوصول السريع كطلاب للاقسام للاجابة على الاستفسارات والمشاكل التي تواجهها خلال رحلتك في الحياة الجامعية
+                    </p>
+                    <p class="mt-6 font-tajawal text-base font-bold text-[#007BFF]">
+                        لتتمكن من استخدام ميزة التواصل عليك تسجيل الدخول
+                    </p>
+
+                    <div class="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
+                        <a href="{{ route('register') }}" class="w-full max-w-[240px] rounded-[15px] bg-[#00d300] py-4 font-tajawal text-base font-bold text-white shadow-lg transition-transform hover:scale-105">
+                            تسجيل طالب جديد
+                        </a>
+                        <button 
+                            @click="showDirectContact = false; showLogin = true"
+                            class="w-full max-w-[240px] rounded-[15px] bg-[#007BFF] py-4 font-tajawal text-base font-bold text-white shadow-lg transition-transform hover:scale-105"
+                        >
+                            دخول كطالب مسجل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Orders Modal -->
+        <div 
+            x-show="showTrackOrders" 
+            x-transition.opacity
+            style="display: none;"
+            class="fixed inset-0 z-[120] flex items-center justify-center px-4 py-8 bg-[#0f172a]/40 backdrop-blur-sm"
+            @click="showTrackOrders = false"
+        >
+            <div 
+                class="relative w-full max-w-[900px] overflow-hidden rounded-[20px] bg-[#cfe3ff] shadow-[0_0_100px_rgba(0,0,0,0.25)]"
+                @click.stop
+            >
+                <div class="h-5 w-full bg-[#007BFF]"></div>
+                <button 
+                    @click="showTrackOrders = false"
+                    class="absolute left-4 top-8 flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-2xl font-bold text-[#007BFF] transition-colors hover:bg-white"
+                >
+                    ×
+                </button>
+
+                <div class="flex flex-col items-center px-6 pb-12 pt-10 text-center">
+                    <div class="flex h-32 w-32 items-center justify-center rounded-full bg-white/70 shadow-sm">
+                        <img src="{{ asset('logo2.png') }}" alt="IUG Logo" class="h-24 w-24 object-contain" />
+                    </div>
+
+                    <h3 class="mt-8 font-tajawal text-[32px] font-bold text-black/80">
+                        متابعة الطلبات إلكترونياً
+                    </h3>
+                    <p class="mt-5 max-w-2xl font-tajawal text-lg font-semibold text-black/70 leading-relaxed">
+                        من خلال ميزة متابعة الطلبات إلكترونياً يتيح لك الوصول السريع كطلاب الى الطلبات والاستفسارات الخاصة بك بشكل اسهل واسرع خلال رحلتك الاكاديمية
+                    </p>
+                    <p class="mt-6 font-tajawal text-base font-bold text-[#007BFF]">
+                        لتتمكن من استخدام ميزة متابعة الطلبات عليك تسجيل الدخول
+                    </p>
+
+                    <div class="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
+                        <a href="{{ route('register') }}" class="w-full max-w-[240px] rounded-[15px] bg-[#00d300] py-4 font-tajawal text-base font-bold text-white shadow-lg transition-transform hover:scale-105">
+                            تسجيل طالب جديد
+                        </a>
+                        <button 
+                            @click="showTrackOrders = false; showLogin = true"
+                            class="w-full max-w-[240px] rounded-[15px] bg-[#007BFF] py-4 font-tajawal text-base font-bold text-white shadow-lg transition-transform hover:scale-105"
+                        >
+                            دخول كطالب مسجل
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </x-layouts.app>

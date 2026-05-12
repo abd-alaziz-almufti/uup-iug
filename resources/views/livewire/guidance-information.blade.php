@@ -1,4 +1,30 @@
-<div dir="rtl" class="w-full max-w-[1120px] rounded-2xl bg-[#bfdeff] p-6 shadow-[0_0_10px_0_#bfdeff]">
+<div 
+    x-data="{ 
+        activeTab: @entangle('activeTab'), 
+        searchQuery: @entangle('searchQuery'),
+        categoryMap: {{ json_encode([
+            'الكل' => null,
+            'التسجيل' => 'التسجيل',
+            'الاختبارات' => 'امتحانات',
+            'علامات' => 'علامات',
+            'مالي' => 'مالي',
+            'متطلبات' => 'متطلبات',
+            'عام' => 'عام',
+        ]) }},
+        shouldShow(faqCategory, faqText) {
+            const catFilter = this.categoryMap[this.activeTab];
+            const matchesCategory = !catFilter || faqCategory === catFilter;
+            
+            const q = this.searchQuery.toLowerCase().trim();
+            if (!q) return matchesCategory;
+            
+            const text = faqText.toLowerCase();
+            return matchesCategory && text.includes(q);
+        }
+    }"
+    dir="rtl" 
+    class="w-full max-w-[1120px] rounded-2xl bg-[#bfdeff] p-6 shadow-[0_0_10px_0_#bfdeff]"
+>
     <!-- Title -->
     <h3 class="mb-4 text-center font-tajawal text-2xl font-bold text-[#08152f]">
         {{ $title }}
@@ -13,23 +39,23 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input 
-                    wire:model.live.debounce.300ms="searchQuery"
+                    x-model="searchQuery"
                     type="text" 
                     placeholder="ابحث في المعلومات الارشادية..."
                     class="w-full bg-transparent font-tajawal text-sm font-semibold text-[#08152f] placeholder:text-black/40 focus:outline-none"
                 />
-                @if($searchQuery)
                 <button 
-                    wire:click="$set('searchQuery', '')"
+                    x-show="searchQuery"
+                    @click="searchQuery = ''"
                     type="button"
                     class="shrink-0 text-black/40 transition-colors hover:text-black/70"
                     aria-label="مسح البحث"
+                    style="display: none;"
                 >
                     <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 6 6 18M6 6l12 12" />
                     </svg>
                 </button>
-                @endif
             </div>
         </div>
 
@@ -39,8 +65,9 @@
             @foreach($filterTabs as $tab)
             <button 
                 type="button" 
-                wire:click="$set('activeTab', '{{ $tab }}')"
-                class="rounded-full px-5 py-1.5 font-tajawal text-sm font-extrabold shadow-[0_0_10px_0_#62abfb] transition-all duration-200 {{ $activeTab === $tab ? 'bg-[#1f7ce8] text-white scale-105' : 'bg-[#62abfb] text-white hover:bg-[#4a9af0]' }}"
+                @click="activeTab = '{{ $tab }}'"
+                class="rounded-full px-5 py-1.5 font-tajawal text-sm font-extrabold shadow-[0_0_10px_0_#62abfb] transition-all duration-200"
+                :class="activeTab === '{{ $tab }}' ? 'bg-[#1f7ce8] text-white scale-105' : 'bg-[#62abfb] text-white hover:bg-[#4a9af0]'"
             >
                 {{ $tab }}
             </button>
@@ -51,12 +78,24 @@
 
     <!-- Accordion List -->
     <div class="mt-6 space-y-3">
-        @forelse($topics as $item)
+        @php
+            // جلب كافة الأسئلة دفعة واحدة للفلترة عبر المتصفح
+            $allTopics = \Illuminate\Support\Facades\Cache::rememberForever('published_faqs', function () {
+                return \App\Models\FAQ::where('status', 'published')
+                    ->select('id', 'question', 'answer', 'category')
+                    ->get()
+                    ->toArray();
+            });
+        @endphp
+
+        @foreach($allTopics as $item)
         <div 
             wire:key="faq-{{ $item['id'] }}"
             x-data="{ expanded: false }" 
+            x-show="shouldShow('{{ $item['category'] }}', '{{ str_replace(["\r", "\n", "'"], '', strip_tags($item['question'] . ' ' . $item['answer'])) }}')"
             class="overflow-hidden rounded-xl border transition-all duration-200"
             :class="expanded ? 'border-[#007bff]/30 bg-blue-50/50 shadow-sm' : 'border-gray-200 bg-white hover:bg-gray-50'"
+            style="display: none;"
         >
             <button 
                 type="button"
@@ -81,8 +120,14 @@
                 </div>
             </div>
         </div>
-        @empty
-        <div class="flex flex-col items-center gap-3 rounded-2xl bg-white/80 py-14 text-center">
+        @endforeach
+
+        <!-- Empty State (handled by Alpine) -->
+        <div 
+            x-show="!document.querySelectorAll('.overflow-hidden[style*=\'display: block\'], .overflow-hidden:not([style*=\'display: none\'])').length"
+            class="flex flex-col items-center gap-3 rounded-2xl bg-white/80 py-14 text-center"
+            style="display: none;"
+        >
             <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
@@ -93,6 +138,5 @@
                 حاول تغيير كلمة البحث أو اختر تصنيف آخر
             </p>
         </div>
-        @endforelse
     </div>
 </div>
