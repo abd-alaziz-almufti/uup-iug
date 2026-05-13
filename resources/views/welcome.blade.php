@@ -80,10 +80,10 @@
                 <!-- Hero section -->
                 <div class="max-w-4xl text-center">
                     <h2 class="mb-2 font-tajawal text-4xl font-bold leading-tight text-[#08152f] lg:text-[40px]">
-                        مرحباً بكم في مركز الاتصال الجامعي الموحد
+                        {{ App\Models\Setting::get('hero_title', 'مرحباً بكم في مركز الاتصال الجامعي الموحد') }}
                     </h2>
                     <p class="mb-8 font-tajawal text-xl font-semibold text-[#178BFF]">
-                        منصة موحّدة تجمع خدمات واستفسارات الطلبة في مكان واحد
+                        {{ App\Models\Setting::get('hero_subtitle', 'منصة موحّدة تجمع خدمات واستفسارات الطلبة في مكان واحد') }}
                     </p>
                 </div>
 
@@ -205,13 +205,13 @@
                     </div>
 
                     <h3 class="mt-8 font-tajawal text-[32px] font-bold text-black/80">
-                        تواصل مباشرة مع الأقسام
+                        {{ App\Models\Setting::get('direct_contact_title', 'تواصل مباشرة مع الأقسام') }}
                     </h3>
                     <p class="mt-5 max-w-2xl font-tajawal text-lg font-semibold text-black/70 leading-relaxed">
-                        من خلال ميزة التواصل المباشر مع الأقسام يتيح لك الوصول السريع كطلاب للاقسام للاجابة على الاستفسارات والمشاكل التي تواجهها خلال رحلتك في الحياة الجامعية
+                        {{ App\Models\Setting::get('direct_contact_description', 'من خلال ميزة التواصل المباشر مع الأقسام يتيح لك الوصول السريع كطلاب للاقسام للاجابة على الاستفسارات والمشاكل التي تواجهها خلال رحلتك في الحياة الجامعية') }}
                     </p>
                     <p class="mt-6 font-tajawal text-base font-bold text-[#007BFF]">
-                        لتتمكن من استخدام ميزة التواصل عليك تسجيل الدخول
+                        {{ App\Models\Setting::get('direct_contact_note', 'لتتمكن من استخدام ميزة التواصل عليك تسجيل الدخول') }}
                     </p>
 
                     <div class="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
@@ -255,13 +255,13 @@
                     </div>
 
                     <h3 class="mt-8 font-tajawal text-[32px] font-bold text-black/80">
-                        متابعة الطلبات إلكترونياً
+                        {{ App\Models\Setting::get('track_orders_title', 'متابعة الطلبات إلكترونياً') }}
                     </h3>
                     <p class="mt-5 max-w-2xl font-tajawal text-lg font-semibold text-black/70 leading-relaxed">
-                        من خلال ميزة متابعة الطلبات إلكترونياً يتيح لك الوصول السريع كطلاب الى الطلبات والاستفسارات الخاصة بك بشكل اسهل واسرع خلال رحلتك الاكاديمية
+                        {{ App\Models\Setting::get('track_orders_description', 'من خلال ميزة متابعة الطلبات إلكترونياً يتيح لك الوصول السريع كطلاب الى الطلبات والاستفسارات الخاصة بك بشكل اسهل واسرع خلال رحلتك الاكاديمية') }}
                     </p>
                     <p class="mt-6 font-tajawal text-base font-bold text-[#007BFF]">
-                        لتتمكن من استخدام ميزة متابعة الطلبات عليك تسجيل الدخول
+                        {{ App\Models\Setting::get('track_orders_note', 'لتتمكن من استخدام ميزة متابعة الطلبات عليك تسجيل الدخول') }}
                     </p>
 
                     <div class="mt-10 flex w-full flex-col items-center justify-center gap-4 sm:flex-row">
