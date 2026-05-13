@@ -1,6 +1,10 @@
 <x-layouts.app>
     <div 
-        x-data="{ showInquiry: false }"
+        x-data="{ 
+            showInquiry: false,
+            showGuide: false,
+            guideTitle: 'دليل القبول الشامل'
+        }"
         class="relative min-h-screen w-full overflow-hidden bg-gradient-to-l from-[#a3c0ec] via-[#afc9f2] to-[#b1c9ee]"
     >
         <div class="pointer-events-none absolute inset-0">
@@ -102,39 +106,80 @@
                     </div>
 
                     @php
-                        // جلب بطاقات القبول ديناميكياً من قاعدة البيانات
-                        $admissionCards = \App\Models\AdmissionCard::with('items')->orderBy('order')->get();
+                        // جلب الكليات مع تخصصاتها لضمان مطابقة البيانات
+                        $colleges = \App\Models\College::with('majors')->get();
+                        
+                        $cardsData = [
+                            [
+                                'id' => 'fees',
+                                'title' => 'الرسوم الدراسية',
+                                'subtitle' => 'ثمن الدراسة الفصلية',
+                                'icon' => '<svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>',
+                                'action_text' => 'عرض جميع التكاليف',
+                                'items' => $colleges->map(fn($c) => [
+                                    'label' => $c->name,
+                                    'value' => 'JD ' . (int)($c->majors->where('degree_type', 'bachelor')->first()?->credit_hour_price ?? 0)
+                                ])
+                            ],
+                            [
+                                'id' => 'rates',
+                                'title' => 'معدلات القبول',
+                                'subtitle' => 'العام الدراسي 2025-2027',
+                                'icon' => '<svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6h-6z"/></svg>',
+                                'action_text' => 'عرض جميع النسب',
+                                'items' => $colleges->map(fn($c) => [
+                                    'label' => $c->name,
+                                    'value' => '+' . (int)($c->majors->where('degree_type', 'bachelor')->first()?->acceptance_rate ?? 0) . '%'
+                                ])
+                            ],
+                            [
+                                'id' => 'all',
+                                'title' => 'الكليات والتخصصات',
+                                'subtitle' => '11 كليات - +40 تخصص',
+                                'icon' => '<svg viewBox="0 0 24 24" class="h-7 w-7" fill="currentColor"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3zM3.89 9L12 4.58 20.11 9 12 13.42 3.89 9zM5 12.06l7 3.82 7-3.82v3.12l-7 3.82-7-3.82v-3.12z"/></svg>',
+                                'action_text' => 'عرض جميع الكليات',
+                                'items' => $colleges->map(fn($c) => [
+                                    'label' => $c->name,
+                                    'value' => $c->majors->count() . ' تخصصات'
+                                ])
+                            ],
+                        ];
                     @endphp
 
                     <div class="mt-8 grid gap-6 lg:grid-cols-3">
-                        @foreach($admissionCards as $card)
+                        @foreach($cardsData as $card)
                             <div class="rounded-[15px] border border-[#007bff] bg-white/90 p-5 shadow-sm">
                                 <div class="flex items-center gap-3 text-[#007bff]">
                                     <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-[#e7f1ff]">
-                                        {!! $card->icon !!}
+                                        {!! $card['icon'] !!}
                                     </div>
                                     <div>
                                         <h4 class="font-tajawal text-lg font-semibold text-[#111827]">
-                                            {{ $card->title }}
+                                            {{ $card['title'] }}
                                         </h4>
-                                        <p class="text-xs text-[#61708a]">{{ $card->subtitle }}</p>
+                                        <p class="text-xs text-[#61708a]">{{ $card['subtitle'] }}</p>
                                     </div>
                                 </div>
 
                                 <div class="mt-4 divide-y divide-[#cfe1ff]">
-                                    @foreach($card->items as $row)
+                                    @foreach($card['items'] as $row)
                                         <div class="flex items-center justify-between py-2 text-sm">
-                                            <span class="text-[#111827]">{{ $row->label }}</span>
-                                            <span class="font-semibold text-[#007bff]">{{ $row->value }}</span>
+                                            <span class="text-[#111827]">{{ $row['label'] }}</span>
+                                            <span class="font-semibold text-[#007bff]">{{ $row['value'] }}</span>
                                         </div>
                                     @endforeach
                                 </div>
 
                                 <button
                                     type="button"
-                                    class="mt-4 w-full rounded-full border border-[#007bff] px-3 py-2 text-sm font-semibold text-[#007bff]"
+                                    @click="
+                                        showGuide = true; 
+                                        guideTitle = '{{ $card['title'] }} الشامل';
+                                        $dispatch('openGuide', { mode: '{{ $card['id'] }}' })
+                                    "
+                                    class="mt-4 w-full rounded-full border border-[#007bff] px-3 py-2 text-sm font-semibold text-[#007bff] transition-colors hover:bg-[#007bff] hover:text-white"
                                 >
-                                    {{ $card->action_text }}
+                                    {{ $card['action_text'] }}
                                 </button>
                             </div>
                         @endforeach
@@ -201,5 +246,49 @@
                 </div>
             </div>
         </div>
+
+        <!-- Admission Guide Modal -->
+        <div 
+            x-show="showGuide" 
+            x-transition.opacity
+            style="display: none;"
+            class="fixed inset-0 z-[150] flex items-center justify-center px-4 py-8 bg-[#0f172a]/50 backdrop-blur-sm"
+            @click="showGuide = false"
+        >
+            <div 
+                class="relative w-full max-w-5xl overflow-hidden rounded-[32px] bg-white shadow-2xl"
+                @click.stop
+            >
+                <!-- Header -->
+                <div class="border-b border-gray-100 px-8 py-6 flex items-center justify-between">
+                    <div>
+                        <h3 class="font-tajawal text-2xl font-bold text-[#08152f]" x-text="guideTitle"></h3>
+                        <p class="text-sm text-gray-500 font-tajawal">استكشف التخصصات، نسب القبول، وسعر الساعة الدراسية</p>
+                    </div>
+                    <button 
+                        @click="showGuide = false"
+                        class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-2xl font-bold text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-800"
+                    >
+                        ×
+                    </button>
+                </div>
+
+                <!-- Scrollable Content -->
+                <div class="max-h-[75vh] overflow-y-auto p-8 pt-4">
+                    <livewire:admission-guide />
+                </div>
+
+                <!-- Footer -->
+                <div class="border-t border-gray-100 px-8 py-4 bg-gray-50 flex justify-end">
+                    <button 
+                        @click="showGuide = false"
+                        class="rounded-xl bg-gray-200 px-6 py-2 font-tajawal text-sm font-bold text-gray-700 transition-colors hover:bg-gray-300"
+                    >
+                        إغلاق
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 </x-layouts.app>
