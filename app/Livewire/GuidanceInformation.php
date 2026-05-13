@@ -4,22 +4,24 @@ namespace App\Livewire;
 
 use Livewire\Component;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Locked;
+use Illuminate\Support\Facades\Cache;
+use App\Models\FAQ;
 
 class GuidanceInformation extends Component
 {
     public $activeTab = 'الكل';
     public $searchQuery = '';
+
+    #[Locked] // ✅ يمنع التعديل من الـ frontend
     public $fixedCategory = null;
+
+    #[Locked]
     public $title = 'المعلومات الارشادية';
 
-    public function mount($fixedCategory = null, $title = 'المعلومات الارشادية')
+    public function getFilterTabsProperty()
     {
-        $this->fixedCategory = $fixedCategory;
-        $this->title = $title;
-        
-        if ($this->fixedCategory) {
-            $this->activeTab = $this->fixedCategory;
-        }
+        return array_keys(self::CATEGORY_MAP);
     }
 
     private const CATEGORY_MAP = [
@@ -32,33 +34,38 @@ class GuidanceInformation extends Component
         "عام" => "عام",
     ];
 
-    #[Computed]
-    public function filteredTopics()
+    public function mount(?string $fixedCategory = null, string $title = 'المعلومات الارشادية'): void
     {
-        $allFaqs = \Illuminate\Support\Facades\Cache::rememberForever('published_faqs', function () {
-            return \App\Models\FAQ::where('status', 'published')
+        $this->fixedCategory = $fixedCategory;
+        $this->title         = $title;
+
+        // ✅ التحقق من أن fixedCategory موجودة في CATEGORY_MAP
+        if ($fixedCategory && in_array($fixedCategory, self::CATEGORY_MAP, strict: true)) {
+            $this->activeTab = $fixedCategory;
+        }
+    }
+
+
+
+    public function getAllTopics()
+    {
+        return Cache::rememberForever('published_faqs_optimized', function () {
+            return FAQ::where('status', 'published')
                 ->select('id', 'question', 'answer', 'category')
                 ->get()
+                ->map(function ($item) {
+                    $item->searchable = mb_strtolower(strip_tags($item->question . ' ' . $item['answer']));
+                    return $item;
+                })
                 ->toArray();
-        });
-
-        $categoryValue = self::CATEGORY_MAP[$this->activeTab] ?? null;
-        $q = trim(mb_strtolower($this->searchQuery));
-
-        return array_filter($allFaqs, function($faq) use ($categoryValue, $q) {
-            $matchesCategory = !$categoryValue || $faq['category'] === $categoryValue;
-            if (!$q) return $matchesCategory;
-
-            $searchable = mb_strtolower($faq['question'] . ' ' . $faq['answer']);
-            return $matchesCategory && str_contains($searchable, $q);
         });
     }
 
     public function render()
     {
         return view('livewire.guidance-information', [
-            'topics' => $this->filteredTopics(),
-            'filterTabs' => array_keys(self::CATEGORY_MAP),
+            'topics' => $this->getAllTopics(),
+            'filterTabs' => $this->filterTabs,
         ]);
     }
 }

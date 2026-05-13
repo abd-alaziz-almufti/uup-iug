@@ -1,7 +1,7 @@
 <div 
     x-data="{ 
-        activeTab: @entangle('activeTab'), 
-        searchQuery: @entangle('searchQuery'),
+        localActiveTab: '{{ $activeTab }}', 
+        localSearch: '',
         categoryMap: {{ json_encode([
             'الكل' => null,
             'التسجيل' => 'التسجيل',
@@ -11,15 +11,14 @@
             'متطلبات' => 'متطلبات',
             'عام' => 'عام',
         ]) }},
-        shouldShow(faqCategory, faqText) {
-            const catFilter = this.categoryMap[this.activeTab];
+        shouldShow(faqCategory, searchableText) {
+            const catFilter = this.categoryMap[this.localActiveTab];
             const matchesCategory = !catFilter || faqCategory === catFilter;
             
-            const q = this.searchQuery.toLowerCase().trim();
+            const q = this.localSearch.toLowerCase().trim();
             if (!q) return matchesCategory;
             
-            const text = faqText.toLowerCase();
-            return matchesCategory && text.includes(q);
+            return matchesCategory && searchableText.includes(q);
         }
     }"
     dir="rtl" 
@@ -39,14 +38,14 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
                 <input 
-                    x-model="searchQuery"
+                    x-model="localSearch"
                     type="text" 
                     placeholder="ابحث في المعلومات الارشادية..."
                     class="w-full bg-transparent font-tajawal text-sm font-semibold text-[#08152f] placeholder:text-black/40 focus:outline-none"
                 />
                 <button 
-                    x-show="searchQuery"
-                    @click="searchQuery = ''"
+                    x-show="localSearch"
+                    @click="localSearch = ''"
                     type="button"
                     class="shrink-0 text-black/40 transition-colors hover:text-black/70"
                     aria-label="مسح البحث"
@@ -65,9 +64,9 @@
             @foreach($filterTabs as $tab)
             <button 
                 type="button" 
-                @click="activeTab = '{{ $tab }}'"
+                @click="localActiveTab = '{{ $tab }}'"
                 class="rounded-full px-5 py-1.5 font-tajawal text-sm font-extrabold shadow-[0_0_10px_0_#62abfb] transition-all duration-200"
-                :class="activeTab === '{{ $tab }}' ? 'bg-[#1f7ce8] text-white scale-105' : 'bg-[#62abfb] text-white hover:bg-[#4a9af0]'"
+                :class="localActiveTab === '{{ $tab }}' ? 'bg-[#1f7ce8] text-white scale-105' : 'bg-[#62abfb] text-white hover:bg-[#4a9af0]'"
             >
                 {{ $tab }}
             </button>
@@ -77,23 +76,13 @@
     </div>
 
     <!-- Accordion List -->
-    <div class="mt-6 space-y-3">
-        @php
-            // جلب كافة الأسئلة دفعة واحدة للفلترة عبر المتصفح
-            $allTopics = \Illuminate\Support\Facades\Cache::rememberForever('published_faqs', function () {
-                return \App\Models\FAQ::where('status', 'published')
-                    ->select('id', 'question', 'answer', 'category')
-                    ->get()
-                    ->toArray();
-            });
-        @endphp
-
-        @foreach($allTopics as $item)
+    <div class="mt-6 space-y-3" id="faq-list">
+        @foreach($topics as $item)
         <div 
             wire:key="faq-{{ $item['id'] }}"
             x-data="{ expanded: false }" 
-            x-show="shouldShow('{{ $item['category'] }}', '{{ str_replace(["\r", "\n", "'"], '', strip_tags($item['question'] . ' ' . $item['answer'])) }}')"
-            class="overflow-hidden rounded-xl border transition-all duration-200"
+            x-show="shouldShow('{{ $item['category'] }}', '{{ str_replace(["\r", "\n", "'", '"'], '', $item['searchable']) }}')"
+            class="overflow-hidden rounded-xl border transition-all duration-200 faq-item"
             :class="expanded ? 'border-[#007bff]/30 bg-blue-50/50 shadow-sm' : 'border-gray-200 bg-white hover:bg-gray-50'"
             style="display: none;"
         >
@@ -122,9 +111,9 @@
         </div>
         @endforeach
 
-        <!-- Empty State (handled by Alpine) -->
+        <!-- No Results Message (handled by Alpine) -->
         <div 
-            x-show="!document.querySelectorAll('.overflow-hidden[style*=\'display: block\'], .overflow-hidden:not([style*=\'display: none\'])').length"
+            x-show="!$el.parentElement.querySelector('.faq-item[style*=\'display: block\'], .faq-item:not([style*=\'display: none\'])')"
             class="flex flex-col items-center gap-3 rounded-2xl bg-white/80 py-14 text-center"
             style="display: none;"
         >
