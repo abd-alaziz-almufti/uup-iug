@@ -29,11 +29,6 @@ class TicketResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title'; 
 
-    public static function canAccess(): bool
-    {
-        return auth()->user()->hasRole(['Super Admin', 'super_admin', 'Academic Supervisor', 'Support Agent']);
-    }
-
     public static function form(Schema $schema): Schema
     {
         return TicketForm::configure($schema);

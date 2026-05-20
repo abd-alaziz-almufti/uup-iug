@@ -64,7 +64,7 @@ class FAQForm
                                 FAQ::STATUS_REJECTED => 'مرفوض',
                             ])
                             ->default(FAQ::STATUS_PENDING)
-                            ->disabled(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Academic Supervisor']))
+                            ->disabled(fn () => !auth()->user()->hasAnyRole(['Super Admin', 'Content Manager', 'super_admin']))
                             ->visible(fn ($record) => $record !== null), // Only show on edit
                     ])
                     ->columns(2),

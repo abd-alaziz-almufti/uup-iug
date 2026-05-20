@@ -117,7 +117,7 @@ class FAQSTable
                         ->label('موافقة ونشر')
                         ->icon('heroicon-o-check-circle')
                         ->color('success')
-                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasRole('Academic Supervisor'))
+                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasAnyRole(['Content Manager', 'Academic Supervisor', 'Super Admin', 'super_admin']))
                         ->action(fn (FAQ $record) => $record->update(['status' => FAQ::STATUS_PUBLISHED]))
                         ->requiresConfirmation(),
                         
@@ -125,7 +125,7 @@ class FAQSTable
                         ->label('رفض النشر')
                         ->icon('heroicon-o-x-circle')
                         ->color('danger')
-                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasRole('Academic Supervisor'))
+                        ->visible(fn (FAQ $record) => $record->status === FAQ::STATUS_PENDING && auth()->user()->hasAnyRole(['Content Manager', 'Academic Supervisor', 'Super Admin', 'super_admin']))
                         ->action(fn (FAQ $record) => $record->update(['status' => FAQ::STATUS_REJECTED]))
                         ->requiresConfirmation(),
                 ]),

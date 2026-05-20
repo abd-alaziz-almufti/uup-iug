@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Major extends Model
 {
     protected $fillable = [
-        'college_id', 
+        'department_id', 
         'name', 
         'degree_type', 
         'acceptance_rate', 
@@ -15,8 +15,8 @@ class Major extends Model
         'total_hours'
     ];
 
-    public function college()
+    public function department()
     {
-        return $this->belongsTo(College::class);
+        return $this->belongsTo(Department::class);
     }
 }

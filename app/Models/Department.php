@@ -60,6 +60,14 @@ class Department extends Model
         return $this->hasMany(Course::class);
     }
 
+    /**
+     * التخصصات الأكاديمية التابعة لهذه الكلية (إن كانت نوعها College)
+     */
+    public function majors()
+    {
+        return $this->hasMany(Major::class);
+    }
+
     protected static function booted()
     {
         static::saved(function ($department) {

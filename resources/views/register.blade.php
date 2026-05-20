@@ -107,7 +107,7 @@
 
                     @php
                         // جلب الكليات مع تخصصاتها لضمان مطابقة البيانات
-                        $colleges = \App\Models\College::with('majors')->get();
+                        $colleges = \App\Models\Department::where('type', 'College')->with('majors')->get();
                         
                         $cardsData = [
                             [

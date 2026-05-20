@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\College;
+use App\Models\Department;
 use App\Models\Major;
 use Livewire\Component;
 
@@ -29,7 +29,7 @@ class AdmissionGuide extends Component
 
     public function render()
     {
-        $colleges = College::with(['majors' => function ($query) {
+        $colleges = Department::where('type', 'College')->with(['majors' => function ($query) {
             $query->where('degree_type', $this->degreeType)
                   ->where('name', 'like', '%' . $this->search . '%');
         }])

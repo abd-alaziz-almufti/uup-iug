@@ -32,8 +32,8 @@ class DatabaseSeeder extends Seeder
         $this->command->info('Shield permissions generated!');
 
         $this->call([
-            RolesAndUsersSeeder::class,
             DepartmentSeeder::class,
+            RolesAndUsersSeeder::class,
             CourseSeeder::class,
             TicketSeeder::class,
             FAQSeeder::class,

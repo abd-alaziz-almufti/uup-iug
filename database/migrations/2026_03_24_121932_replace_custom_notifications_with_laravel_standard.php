@@ -11,7 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::rename('notifications', 'custom_user_notifications');
+        if (Schema::hasTable('notifications')) {
+            Schema::rename('notifications', 'custom_user_notifications');
+        }
     }
 
     /**

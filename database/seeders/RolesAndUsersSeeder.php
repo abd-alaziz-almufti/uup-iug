@@ -73,7 +73,52 @@ class RolesAndUsersSeeder extends Seeder
         ]);
         $academicSupervisor->assignRole($academicSupervisorRole);
 
-        // 5. Students
+        // 5. Dean
+        $deanRole = Role::firstOrCreate(['name' => 'Dean', 'guard_name' => 'web']);
+        $deanRole->syncPermissions([
+            'ViewAny:Ticket', 'View:Ticket', 'Update:Ticket',
+            'ViewAny:Department', 'View:Department',
+        ]);
+        $dean = User::firstOrCreate([
+            'email' => 'dean@iug.edu.ps',
+        ], [
+            'name' => 'IT Dean',
+            'university_id' => '10004',
+            'password' => Hash::make('password'),
+            'department_id' => 1, // Assumes IT department exists
+        ]);
+        $dean->assignRole($deanRole);
+
+        // 6. Instructor
+        $instructorRole = Role::firstOrCreate(['name' => 'Instructor', 'guard_name' => 'web']);
+        $instructorRole->syncPermissions([
+            'ViewAny:Ticket', 'View:Ticket', 'Update:Ticket',
+        ]);
+        $instructor = User::firstOrCreate([
+            'email' => 'instructor@iug.edu.ps',
+        ], [
+            'name' => 'IT Instructor',
+            'university_id' => '10005',
+            'password' => Hash::make('password'),
+            'department_id' => 1,
+        ]);
+        $instructor->assignRole($instructorRole);
+
+        // 7. Admission Officer
+        $admissionRole = Role::firstOrCreate(['name' => 'Admission Officer', 'guard_name' => 'web']);
+        $admissionRole->syncPermissions([
+            'ViewAny:Ticket', 'View:Ticket', 'Update:Ticket',
+        ]);
+        $admissionOfficer = User::firstOrCreate([
+            'email' => 'admission@iug.edu.ps',
+        ], [
+            'name' => 'Admission Officer',
+            'university_id' => '10006',
+            'password' => Hash::make('password'),
+        ]);
+        $admissionOfficer->assignRole($admissionRole);
+
+        // 8. Students
         $studentRole = Role::firstOrCreate(['name' => 'Student', 'guard_name' => 'web']);
         // Students don't need Filament panel access, they only use the front-end, but we create them here
         $student1 = User::firstOrCreate([

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('majors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('college_id')->constrained()->onDelete('cascade');
+            $table->foreignId('department_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->enum('degree_type', ['bachelor', 'diploma'])->default('bachelor');
             $table->decimal('acceptance_rate', 5, 2);

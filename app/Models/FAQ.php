@@ -23,11 +23,11 @@ class FAQ extends Model
     protected static function booted()
     {
         static::saved(function ($faq) {
-            \Illuminate\Support\Facades\Cache::forget('published_faqs');
+            \Illuminate\Support\Facades\Cache::forget('published_faqs_optimized');
         });
 
         static::deleted(function ($faq) {
-            \Illuminate\Support\Facades\Cache::forget('published_faqs');
+            \Illuminate\Support\Facades\Cache::forget('published_faqs_optimized');
         });
     }
 
