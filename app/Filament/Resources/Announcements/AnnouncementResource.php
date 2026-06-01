@@ -45,7 +45,14 @@ class AnnouncementResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()->with(['department', 'publisher']);
+        $query = parent::getEloquentQuery()->with(['department', 'publisher']);
+        $user = auth()->user();
+
+        if ($user->hasRole(['Super Admin', 'super_admin', 'Content Manager'])) {
+            return $query;
+        }
+
+        return $query->where('department_id', $user->department_id);
     }
 
     public static function getPages(): array

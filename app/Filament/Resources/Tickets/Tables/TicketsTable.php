@@ -26,10 +26,12 @@ class TicketsTable
     {
         return $table
             ->columns([
-                TextColumn::make('id')
-                    ->label('#')
+                TextColumn::make('ticket_code')
+                    ->label('رقم التذكرة')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->copyable()
+                    ->weight('bold'),
 
                 TextColumn::make('title')
                     ->label('العنوان')

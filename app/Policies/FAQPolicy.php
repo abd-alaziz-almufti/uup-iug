@@ -19,7 +19,25 @@ class FAQPolicy
 
     public function view(AuthUser $authUser, FAQ $fAQ): bool
     {
-        return $authUser->can('View:FAQ');
+        if (!$authUser->can('View:FAQ')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin', 'Content Manager', 'Support Agent'])) {
+            return true;
+        }
+
+        // Check if FAQ is related to the user's department or course
+        if ($authUser->hasRole('Academic Supervisor')) {
+            return $fAQ->course && $fAQ->course->department_id === $authUser->department_id;
+        }
+
+        if ($authUser->hasRole('Instructor')) {
+            return $fAQ->course_id && \App\Models\Course::where('id', $fAQ->course_id)
+                ->where('department_id', $authUser->department_id)->exists();
+        }
+
+        return false;
     }
 
     public function create(AuthUser $authUser): bool
@@ -29,12 +47,24 @@ class FAQPolicy
 
     public function update(AuthUser $authUser, FAQ $fAQ): bool
     {
-        return $authUser->can('Update:FAQ');
+        if (!$authUser->can('Update:FAQ')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin', 'Content Manager'])) {
+            return true;
+        }
+
+        return $this->view($authUser, $fAQ);
     }
 
     public function delete(AuthUser $authUser, FAQ $fAQ): bool
     {
-        return $authUser->can('Delete:FAQ');
+        if (!$authUser->can('Delete:FAQ')) {
+            return false;
+        }
+
+        return $authUser->hasRole(['Super Admin', 'super_admin', 'Content Manager']);
     }
 
     public function restore(AuthUser $authUser, FAQ $fAQ): bool

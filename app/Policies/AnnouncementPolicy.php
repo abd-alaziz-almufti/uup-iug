@@ -19,7 +19,15 @@ class AnnouncementPolicy
 
     public function view(AuthUser $authUser, Announcement $announcement): bool
     {
-        return $authUser->can('View:Announcement');
+        if (!$authUser->can('View:Announcement')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin', 'Content Manager'])) {
+            return true;
+        }
+
+        return $announcement->department_id === $authUser->department_id;
     }
 
     public function create(AuthUser $authUser): bool
@@ -29,12 +37,28 @@ class AnnouncementPolicy
 
     public function update(AuthUser $authUser, Announcement $announcement): bool
     {
-        return $authUser->can('Update:Announcement');
+        if (!$authUser->can('Update:Announcement')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin', 'Content Manager'])) {
+            return true;
+        }
+
+        return $announcement->department_id === $authUser->department_id;
     }
 
     public function delete(AuthUser $authUser, Announcement $announcement): bool
     {
-        return $authUser->can('Delete:Announcement');
+        if (!$authUser->can('Delete:Announcement')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin'])) {
+            return true;
+        }
+
+        return $announcement->department_id === $authUser->department_id;
     }
 
     public function restore(AuthUser $authUser, Announcement $announcement): bool

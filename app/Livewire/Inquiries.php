@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use Illuminate\Support\Facades\Cache;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Computed;
@@ -123,7 +124,7 @@ class Inquiries extends Component
     #[Computed]
     public function departmentsList()
     {
-        return \Illuminate\Support\Facades\Cache::rememberForever('departments_list', function () {
+        return Cache::rememberForever('departments_list', function () {
             return Department::all(['id', 'name', 'type']); // جلب حقل type
         });
     }

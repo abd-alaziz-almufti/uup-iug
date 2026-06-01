@@ -48,7 +48,26 @@ class FAQResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()->with(['course']);
+        $query = parent::getEloquentQuery()->with(['course']);
+        $user = auth()->user();
+
+        if ($user->hasRole(['Super Admin', 'super_admin', 'Content Manager', 'Support Agent'])) {
+            return $query;
+        }
+
+        if ($user->hasRole('Academic Supervisor')) {
+            return $query->whereHas('course', function ($q) use ($user) {
+                $q->where('department_id', $user->department_id);
+            });
+        }
+
+        if ($user->hasRole('Instructor')) {
+            return $query->whereHas('course', function ($q) use ($user) {
+                $q->where('department_id', $user->department_id);
+            });
+        }
+
+        return $query->where('id', 0);
     }
 
     public static function getPages(): array

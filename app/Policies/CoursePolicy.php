@@ -19,7 +19,19 @@ class CoursePolicy
 
     public function view(AuthUser $authUser, Course $course): bool
     {
-        return $authUser->can('View:Course');
+        if (!$authUser->can('View:Course')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin', 'Academic Supervisor', 'Content Manager'])) {
+            // Supervisors can see if it's their department
+            if ($authUser->hasRole('Academic Supervisor')) {
+                return $course->department_id === $authUser->department_id;
+            }
+            return true;
+        }
+
+        return false;
     }
 
     public function create(AuthUser $authUser): bool
@@ -29,12 +41,20 @@ class CoursePolicy
 
     public function update(AuthUser $authUser, Course $course): bool
     {
-        return $authUser->can('Update:Course');
+        if (!$authUser->can('Update:Course')) {
+            return false;
+        }
+
+        if ($authUser->hasRole(['Super Admin', 'super_admin'])) {
+            return true;
+        }
+
+        return $course->department_id === $authUser->department_id;
     }
 
     public function delete(AuthUser $authUser, Course $course): bool
     {
-        return $authUser->can('Delete:Course');
+        return $authUser->hasRole(['Super Admin', 'super_admin']);
     }
 
     public function restore(AuthUser $authUser, Course $course): bool

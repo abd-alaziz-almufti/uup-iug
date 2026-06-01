@@ -46,7 +46,18 @@ class CourseResource extends Resource
 
     public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
     {
-        return parent::getEloquentQuery()->with(['department']);
+        $query = parent::getEloquentQuery()->with(['department']);
+        $user = auth()->user();
+
+        if ($user->hasRole(['Super Admin', 'super_admin'])) {
+            return $query;
+        }
+
+        if ($user->hasRole(['Academic Supervisor', 'Content Manager'])) {
+            return $query->where('department_id', $user->department_id);
+        }
+
+        return $query;
     }
 
     public static function getPages(): array

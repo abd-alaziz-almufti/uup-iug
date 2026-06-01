@@ -48,6 +48,18 @@ class LoginModal extends Component
         $field = filter_var($this->username, FILTER_VALIDATE_EMAIL) ? 'email' : 'university_id';
 
         if (Auth::attempt([$field => $this->username, 'password' => $this->password], $this->remember)) {
+            $user = Auth::user();
+            
+            // التحقق من أن المستخدم لديه دور طالب
+            if (!$user->isStudent()) {
+                Auth::logout();
+                session()->invalidate();
+                session()->regenerateToken();
+                
+                $this->addError('username', 'عذراً، هذا النظام مخصص للطلاب فقط.');
+                return;
+            }
+
             RateLimiter::clear($throttleKey);
             return redirect()->intended('/dashboard');
         }
