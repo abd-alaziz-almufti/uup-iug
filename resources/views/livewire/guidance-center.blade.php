@@ -52,6 +52,7 @@
                         'title' => 'فيديوهات تعليمية',
                         'description' => 'تعرف على المحتوى المرئي',
                         'icon' => asset('figma/guide-video.png'),
+                        'url' => 'https://newstd.iugaza.edu.ps/%D8%A2%D8%B1%D8%A7%D8%A1-%D9%88%D9%86%D8%B5%D8%A7%D8%A6%D8%AD/',
                     ],
                     [
                         'id' => 'guide-info',
