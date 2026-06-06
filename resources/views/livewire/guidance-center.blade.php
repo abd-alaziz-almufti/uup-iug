@@ -58,6 +58,7 @@
                         'title' => 'معلومات ارشادية',
                         'description' => 'تعرف على المزيد من الارشادات الجامعية',
                         'icon' => asset('figma/guide-info.png'),
+                        'url' => 'https://drive.google.com/file/d/1r0ty8Mttz8T2npCFCgeQS7J5M4SlKE2c/view?usp=sharing',
                     ],
                 ];
             @endphp
@@ -82,16 +83,29 @@
                                 />
                             </div>
                         </div>
-                        <button
-                            type="button"
-                            wire:click="handleInfoCardClick('{{ $card['id'] }}')"
-                            class="flex items-center justify-center gap-2 py-2 text-sm font-bold bg-[#62abfb] text-black hover:bg-[#4a9af0] transition-colors"
-                        >
-                            تعرف على المزيد
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
-                            </svg>
-                        </button>
+                        @if(isset($card['url']))
+                            <a
+                                href="{{ $card['url'] }}"
+                                target="_blank"
+                                class="flex items-center justify-center gap-2 py-2 text-sm font-bold bg-[#62abfb] text-black hover:bg-[#4a9af0] transition-colors"
+                            >
+                                تعرف على المزيد
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </a>
+                        @else
+                            <button
+                                type="button"
+                                wire:click="handleInfoCardClick('{{ $card['id'] }}')"
+                                class="flex items-center justify-center gap-2 py-2 text-sm font-bold bg-[#62abfb] text-black hover:bg-[#4a9af0] transition-colors"
+                            >
+                                تعرف على المزيد
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                                </svg>
+                            </button>
+                        @endif
                     </div>
                 @endforeach
             </div>
