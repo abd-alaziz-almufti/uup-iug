@@ -83,15 +83,16 @@
                                         <path d="M21 6.5 12 13l-9-6.5V5l9 6 9-6v1.5Z" />
                                     </svg>
                                 </button>
-                                <button
-                                    type="button"
+                                <a
+                                    href="https://eportal.iugaza.edu.ps/ords/f?p=142:LOGIN:29672519957096:::::"
+                                    target="_blank"
                                     class="flex items-center justify-center gap-2 rounded-[15px] bg-[#00d300] px-6 py-3 font-tajawal text-base font-semibold text-white transition-transform hover:scale-105 active:scale-95"
                                 >
                                     <span>قم بالتسجيل الآن</span>
                                     <svg viewBox="0 0 24 24" class="h-5 w-5" aria-hidden="true" fill="currentColor">
                                         <path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Z" />
                                     </svg>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>

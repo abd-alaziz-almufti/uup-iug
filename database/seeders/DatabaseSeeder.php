@@ -39,6 +39,7 @@ class DatabaseSeeder extends Seeder
             TicketSeeder::class,
             FAQSeeder::class,
             ContactSeeder::class,
+            SettingsSeeder::class,
         ]);
 
     }
