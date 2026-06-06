@@ -26,6 +26,10 @@ class Inquiries extends Component
     public $course_id = '';
     public $attachment;
 
+    // Success Modal
+    public $showSuccessModal = false;
+    public $successMessage = '';
+
     public function mount()
     {
         $firstTicket = collect($this->tickets)->first();
@@ -100,18 +104,14 @@ class Inquiries extends Component
         $types = [];
 
         // استخدام حقل type بدلاً من اسم القسم لمرونة أعلى
-        if ($dept->type === 'academic' || $dept->type === 'faculty') {
+        if ($dept->type === 'College') {
             $types = [
                 ['value' => 'supervisor', 'label' => 'المشرف الأكاديمي'],
                 ['value' => 'dean', 'label' => 'عميد الكلية'],
                 ['value' => 'instructor', 'label' => 'مدرس المادة'],
             ];
-        } elseif ($dept->type === 'admission') {
-            $types = [
-                ['value' => 'admission', 'label' => 'موظف القبول والتسجيل'],
-            ];
         } else {
-            // Default for other departments
+            // Default for other departments (Admin_Dept)
             $types = [
                 ['value' => 'supervisor', 'label' => 'رئيس الدائرة'],
                 ['value' => 'instructor', 'label' => 'موظف مختص'],
@@ -124,9 +124,14 @@ class Inquiries extends Component
     #[Computed]
     public function departmentsList()
     {
-        return Cache::rememberForever('departments_list', function () {
-            return Department::all(['id', 'name', 'type']); // جلب حقل type
-        });
+        if (!auth()->check()) return collect();
+
+        $user = auth()->user();
+
+        // جلب الأقسام الإدارية + الكلية الخاصة بالطالب فقط
+        return \App\Models\Department::where('type', 'Admin_Dept')
+            ->orWhere('id', $user->department_id)
+            ->get(['id', 'name', 'type']);
     }
 
     public function selectTicket($id)
@@ -194,7 +199,11 @@ class Inquiries extends Component
             \Illuminate\Support\Facades\Cache::forget('student_tickets_' . auth()->id());
             unset($this->tickets);
             
-            session()->flash('message', 'تم إنشاء التذكرة بنجاح برقم: ' . $ticket->ticket_code);
+            $departmentName = $ticket->department?->name ?? 'الجهة المعنية';
+            $targetLabel = collect($this->availableTargetTypes)->firstWhere('value', $this->targetType)['label'] ?? '';
+            
+            $this->successMessage = "تم إرسال التذكرة إلى {$departmentName} ({$targetLabel}) بنجاح برقم: {$ticket->ticket_code}";
+            $this->showSuccessModal = true;
             
         } catch (\Exception $e) {
             \Log::error('Inquiries Create Error: ' . $e->getMessage());

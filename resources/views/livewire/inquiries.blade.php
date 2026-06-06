@@ -1,7 +1,10 @@
 <section 
     dir="rtl" 
     class="space-y-6 text-right"
-    x-data="{ showCreateModal: @entangle('showCreateModal') }"
+    x-data="{ 
+        showCreateModal: @entangle('showCreateModal'),
+        showSuccessModal: @entangle('showSuccessModal')
+    }"
 >
     <!-- ... existing ticket list content ... -->
     @if(session()->has('message'))
@@ -284,6 +287,65 @@
                     </div>
                 </div>
             </form>
+        </div>
+    </template>
+
+    <!-- Success Modal -->
+    <template x-teleport="body">
+        <div 
+            x-show="showSuccessModal" 
+            x-cloak
+            class="fixed inset-0 z-[300] flex items-center justify-center px-4 py-6" 
+            dir="rtl"
+        >
+            <!-- Backdrop -->
+            <div 
+                x-show="showSuccessModal"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0"
+                x-transition:enter-end="opacity-100"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="absolute inset-0 bg-slate-900/60 backdrop-blur-md" 
+                @click="showSuccessModal = false"
+            ></div>
+            
+            <!-- Modal Content -->
+            <div 
+                x-show="showSuccessModal"
+                x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                x-transition:leave="transition ease-in duration-200"
+                x-transition:leave-start="opacity-100 scale-100 translate-y-0"
+                x-transition:leave-end="opacity-0 scale-95 translate-y-4"
+                class="relative z-[301] w-full max-w-md overflow-hidden rounded-[32px] bg-white p-8 text-center shadow-[0_25px_50px_-12px_rgba(0,0,0,0.25)]"
+            >
+                <div class="mb-6 flex justify-center">
+                    <div class="flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-green-600">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                        </svg>
+                    </div>
+                </div>
+
+                <h3 class="mb-2 font-tajawal text-2xl font-black text-slate-900">تم الإرسال بنجاح!</h3>
+                
+                <div class="mb-8 rounded-2xl bg-slate-50 p-6">
+                    <p class="font-tajawal text-sm leading-relaxed font-bold text-slate-600">
+                        {{ $successMessage }}
+                    </p>
+                </div>
+
+                <button 
+                    type="button" 
+                    @click="showSuccessModal = false"
+                    class="w-full rounded-2xl bg-[#0f6ff2] py-4 font-tajawal text-lg font-bold text-white shadow-[0_10px_20px_-5px_rgba(15,111,242,0.4)] transition-all hover:bg-blue-600 active:scale-[0.98]"
+                >
+                    حسناً، فهمت
+                </button>
+            </div>
         </div>
     </template>
 

@@ -35,6 +35,7 @@ class DatabaseSeeder extends Seeder
             DepartmentSeeder::class,
             RolesAndUsersSeeder::class,
             CourseSeeder::class,
+            StudentEnrollmentSeeder::class,
             TicketSeeder::class,
             FAQSeeder::class,
             ContactSeeder::class,
