@@ -156,6 +156,19 @@ class Ticket extends Model
                         ->sendToDatabase($assignedUser);
                 }
             }
+
+            // إشعار الطالب عند حل التذكرة أو إغلاقها
+            if ($ticket->wasChanged('status') && in_array($ticket->status, ['resolved', 'closed'])) {
+                if ($ticket->student) {
+                    $statusLabel = $ticket->status === 'resolved' ? 'محلوّلة' : 'مغلقة';
+                    \Filament\Notifications\Notification::make()
+                        ->title('تحديث على تذكرتك')
+                        ->body('تم تحديث حالة تذكرتك "' . $ticket->title . '" لتصبح: ' . $statusLabel)
+                        ->icon('heroicon-o-check-badge')
+                        ->success()
+                        ->sendToDatabase($ticket->student);
+                }
+            }
         });
 
         static::saved(function ($ticket) {
