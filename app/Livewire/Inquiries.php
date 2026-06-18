@@ -116,6 +116,11 @@ class Inquiries extends Component
                 ['value' => 'supervisor', 'label' => 'رئيس الدائرة'],
                 ['value' => 'instructor', 'label' => 'موظف مختص'],
             ];
+
+            // إضافة خيار القبول والتسجيل إذا كان القسم هو دائرة القبول والتسجيل
+            if ($dept->name === 'دائرة القبول والتسجيل') {
+                $types[] = ['value' => 'admission', 'label' => 'موظف القبول والتسجيل'];
+            }
         }
 
         return $types;
