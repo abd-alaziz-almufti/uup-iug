@@ -22,16 +22,21 @@ class LatestTickets extends BaseWidget
         $query = Ticket::query();
 
         if (!$user->hasRole(['super_admin', 'Super Admin'])) {
-            if ($user->hasRole('Dean')) {
+            if ($user->hasRole(['Dean', 'Academic Supervisor'])) {
                 $query->where('department_id', $user->department_id);
-            } elseif ($user->hasRole('Academic Supervisor')) {
-                $query->where('department_id', $user->department_id);
-            } elseif ($user->hasRole('Support Agent')) {
-                $query->where('assigned_to', $user->id);
             } elseif ($user->hasRole('Instructor')) {
-                $query->where('department_id', $user->department_id);
+                // المدرس يرى التذاكر الموجهة للمدرسين في قسمه
+                $query->where('department_id', $user->department_id)
+                      ->where('target_type', 'instructor');
             } elseif ($user->hasRole('Admission Officer')) {
+                // موظف القبول يرى التذاكر الموجهة للقبول
                 $query->where('target_type', 'admission');
+            } elseif ($user->hasRole('Support Agent')) {
+                // موظف الدعم يرى التذاكر المسندة إليه أو غير المسندة في قسمه
+                $query->where(fn ($q) => 
+                    $q->where('assigned_to', $user->id)
+                      ->orWhere(fn ($sq) => $sq->whereNull('assigned_to')->where('department_id', $user->department_id))
+                );
             }
         }
 

@@ -20,18 +20,22 @@ class TicketsChart extends ChartWidget
 
         // تصفية حسب الدور
         if (!$user->hasRole(['super_admin', 'Super Admin'])) {
-            if ($user->hasRole('Dean')) {
+            if ($user->hasRole(['Dean', 'Academic Supervisor'])) {
                 $query->where('department_id', $user->department_id);
-            } else {
-                // إذا لم يكن سوبر أدمن أو عميد، لا تظهر بيانات (أو تظهر فارغة)
-                return [
-                    'datasets' => [],
-                    'labels' => [],
-                ];
+            } elseif ($user->hasRole('Instructor')) {
+                $query->where('department_id', $user->department_id)
+                      ->where('target_type', 'instructor');
+            } elseif ($user->hasRole('Admission Officer')) {
+                $query->where('target_type', 'admission');
+            } elseif ($user->hasRole('Support Agent')) {
+                $query->where(fn ($q) => 
+                    $q->where('assigned_to', $user->id)
+                      ->orWhere(fn ($sq) => $sq->whereNull('assigned_to')->where('department_id', $user->department_id))
+                );
             }
         }
 
-        $data = Ticket::query()
+        $data = (clone $query)
             ->where('created_at', '>=', now()->subDays(7))
             ->selectRaw('DATE(created_at) as date, count(*) as total')
             ->groupBy('date')
@@ -44,7 +48,7 @@ class TicketsChart extends ChartWidget
         $values = [];
         for ($i = 6; $i >= 0; $i--) {
             $date = now()->subDays($i)->format('Y-m-d');
-            $labels[] = now()->subDays($i)->format('D'); // اسم اليوم بالإنجليزية أو العربية حسب الترجمة
+            $labels[] = now()->subDays($i)->format('D');
             $values[] = $data[$date] ?? 0;
         }
 
@@ -68,6 +72,7 @@ class TicketsChart extends ChartWidget
     public static function canView(): bool
     {
         $user = Auth::user();
-        return $user->hasRole(['super_admin', 'Super Admin', 'Dean']);
+        // متاح لجميع موظفي الإدارة لرؤية إحصائياتهم الخاصة
+        return $user->hasRole(['super_admin', 'Super Admin', 'Dean', 'Academic Supervisor', 'Admission Officer', 'Support Agent', 'Instructor']);
     }
 }
