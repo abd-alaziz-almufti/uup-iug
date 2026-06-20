@@ -1,59 +1,78 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# UUP-IUG (University User Portal - Islamic University of Gaza)
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-FF2D20?style=for-the-badge&logo=laravel)](https://laravel.com)
+[![Filament](https://img.shields.io/badge/Filament-4.x-FBAE3C?style=for-the-badge&logo=filamentphp)](https://filamentphp.com)
+[![Livewire](https://img.shields.io/badge/Livewire-3.x-FB70A9?style=for-the-badge&logo=livewire)](https://livewire.laravel.com)
 
-## About Laravel
+A comprehensive student and administrative portal designed for the Islamic University of Gaza (IUG) to streamline academic inquiries, student services, and administrative management.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🚀 Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### 🎓 Student Services
+- **🎟️ Advanced Ticket System**: Submit, track, and manage academic inquiries with department-specific routing.
+- **📢 Academic Announcements**: Stay updated with the latest news and university announcements.
+- **📁 Academic Guides**: Access necessary documents and guides for students.
+- **❓ FAQ System**: Quick answers to common student questions.
+- **👤 Profile Management**: Manage student profile details and submit edit requests for sensitive information.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### 🛡️ Administrative Portal (Filament-powered)
+- **📊 Real-time Dashboard**: Overview of ticket statuses, recent activities, and pending requests.
+- **🎫 Ticket Management**: Comprehensive tools for staff to reply to and resolve student inquiries.
+- **👥 User & Role Management**: Granular access control using Filament Shield (Roles: Admin, Dean, Faculty, Student, etc.).
+- **📋 Content Management**: Manage Announcements, FAQs, Guides, and Academic Data (Colleges, Departments, Courses).
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🛠️ Tech Stack
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- **Framework**: [Laravel 12+](https://laravel.com)
+- **Admin Panel**: [Filament 4+](https://filamentphp.com)
+- **Frontend**: [Livewire 3](https://livewire.laravel.com) & Blade
+- **Styling**: [Tailwind CSS](https://tailwindcss.com)
+- **Database**: SQLite (Default) / MySQL
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ⚙️ Installation
 
-### Premium Partners
+To set up the project locally, follow these steps:
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd uup-iug
+   ```
 
-## Contributing
+2. **Run the setup script**:
+   This project includes a convenient setup script that handles composer installation, environment setup, key generation, and migrations.
+   ```bash
+   composer setup
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+3. **Seeding (Optional)**:
+   If you need sample data:
+   ```bash
+   php artisan db:seed
+   ```
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 💻 Development
 
-## Security Vulnerabilities
+Start the development server with all necessary background processes (Queue, Logs, Vite):
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+composer dev
+```
 
-## License
+This command runs the following concurrently:
+- PHP Development Server (`php artisan serve`)
+- Queue Listener
+- Tail Logs (`php artisan pail`)
+- Vite Dev Server (`npm run dev`)
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+
+## 📄 License
+
+This project is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
