@@ -11,10 +11,10 @@ fi
 
 # Ensure APP_KEY is valid base64 key
 if [ -z "$APP_KEY" ] || [[ "$APP_KEY" != base64:* ]]; then
-    echo "=== Generating Laravel APP_KEY ==="
-    GENERATED_KEY=$(php artisan key:generate --show --no-ansi)
+    echo "=== Generating Valid Base64 Laravel APP_KEY ==="
+    GENERATED_KEY=$(php -r 'echo "base64:".base64_encode(random_bytes(32));')
     export APP_KEY="$GENERATED_KEY"
-    echo "APP_KEY generated: ${APP_KEY:0:15}..."
+    echo "APP_KEY set to: ${APP_KEY:0:20}..."
     if grep -q "^APP_KEY=" .env; then
         sed -i "s|^APP_KEY=.*|APP_KEY=$GENERATED_KEY|" .env
     else
