@@ -43,6 +43,8 @@ services:
         value: 12
       - key: SEED_DATABASE
         value: "true"
+      - key: APP_KEY
+        value: base64:8BbS5JjIjbhb/Z0VMtsgvR7lenqQ2ec4jcPcnZbQRPA=
 
 databases:
   - name: uup-iug-db

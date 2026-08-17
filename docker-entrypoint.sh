@@ -12,7 +12,14 @@ fi
 # Ensure APP_KEY is valid base64 key
 if [ -z "$APP_KEY" ] || [[ "$APP_KEY" != base64:* ]]; then
     echo "=== Generating Laravel APP_KEY ==="
-    php artisan key:generate --force
+    GENERATED_KEY=$(php artisan key:generate --show --no-ansi)
+    export APP_KEY="$GENERATED_KEY"
+    echo "APP_KEY generated: ${APP_KEY:0:15}..."
+    if grep -q "^APP_KEY=" .env; then
+        sed -i "s|^APP_KEY=.*|APP_KEY=$GENERATED_KEY|" .env
+    else
+        echo "APP_KEY=$GENERATED_KEY" >> .env
+    fi
 fi
 
 echo "=== Running Laravel Database Migrations ==="
