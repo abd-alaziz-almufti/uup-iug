@@ -20,7 +20,7 @@ class ContactDepartment extends Component
             return Department::with('contacts:id,department_id,name,position,phone,email')
                 ->select('id', 'name', 'icon') // تحديد الأعمدة المطلوبة للـ Department
                 ->get()
-                ->map(function ($dept) {
+                ->map(function ($dept) { 
                     return [
                         "id" => $dept->id,
                         "title" => $dept->name,

@@ -1,0 +1,57 @@
+services:
+  - type: web
+    name: uup-iug
+    runtime: php
+    plan: free
+    region: frankfurt
+    buildCommand: ./render-build.sh
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    healthCheckPath: /
+    envVars:
+      - key: APP_NAME
+        value: UUP-IUG
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: APP_URL
+        fromService:
+          type: web
+          name: uup-iug
+          property: host
+      - key: APP_LOCALE
+        value: ar
+      - key: APP_FALLBACK_LOCALE
+        value: en
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DB_URL
+        fromDatabase:
+          name: uup-iug-db
+          property: connectionString
+      - key: SESSION_DRIVER
+        value: file
+      - key: CACHE_STORE
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: LOG_CHANNEL
+        value: stderr
+      - key: LOG_LEVEL
+        value: error
+      - key: FILESYSTEM_DISK
+        value: local
+      - key: BCRYPT_ROUNDS
+        value: 12
+      - key: SEED_DATABASE
+        value: "true"
+
+databases:
+  - name: uup-iug-db
+    plan: free
+    region: frankfurt
+    databaseName: uup_iug
+    user: uup_user
+
