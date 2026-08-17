@@ -30,7 +30,9 @@ if [ "${SEED_DATABASE:-false}" = "true" ]; then
     php artisan db:seed --force || true
 fi
 
-echo "=== Caching Configuration & Routes ==="
+echo "=== Clearing & Caching Configuration & Routes ==="
+php artisan config:clear || true
+php artisan route:clear || true
 php artisan config:cache
 php artisan route:cache
 php artisan view:cache
