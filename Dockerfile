@@ -13,8 +13,15 @@ RUN npm run build
 # Stage 2: PHP Application Environment
 FROM php:8.3-cli-alpine
 
-# Install system dependencies & PHP extensions required by Laravel & Filament
+# Environment variables for Composer
+ENV COMPOSER_ALLOW_SUPERUSER=1
+ENV COMPOSER_MEMORY_LIMIT=-1
+
+# Install system dependencies, git, unzip & PHP extensions required by Laravel & Filament
 RUN apk add --no-cache \
+    git \
+    unzip \
+    zip \
     bash \
     icu-dev \
     libpng-dev \
@@ -45,12 +52,13 @@ COPY . .
 # Copy built Vite assets from frontend stage
 COPY --from=frontend /app/public/build ./public/build
 
-# Install PHP production dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
+# Install PHP production dependencies with git fallback if GitHub zip CDN rate limits (HTTP 429)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist || \
+    composer install --no-dev --optimize-autoloader --no-interaction --prefer-source
 
 # Copy entrypoint script and make it executable
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh /var/www/html/render-build.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Set directory permissions
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
