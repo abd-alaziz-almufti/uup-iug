@@ -4,9 +4,17 @@
 # =============================================================================
 set -e
 
-# Ensure .env exists
-if [ ! -f .env ]; then
-    cp .env.example .env
+# Ensure .env exists and uses environment variables
+cp .env.example .env
+
+if [ -n "$DB_CONNECTION" ]; then
+    sed -i "s|^DB_CONNECTION=.*|DB_CONNECTION=$DB_CONNECTION|" .env || true
+fi
+if [ -n "$SESSION_DRIVER" ]; then
+    sed -i "s|^SESSION_DRIVER=.*|SESSION_DRIVER=$SESSION_DRIVER|" .env || true
+fi
+if [ -n "$CACHE_STORE" ]; then
+    sed -i "s|^CACHE_STORE=.*|CACHE_STORE=$CACHE_STORE|" .env || true
 fi
 
 # Ensure APP_KEY is valid base64 key
