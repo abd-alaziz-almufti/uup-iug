@@ -4,6 +4,17 @@
 # =============================================================================
 set -e
 
+# Ensure .env exists
+if [ ! -f .env ]; then
+    cp .env.example .env
+fi
+
+# Ensure APP_KEY is valid base64 key
+if [ -z "$APP_KEY" ] || [[ "$APP_KEY" != base64:* ]]; then
+    echo "=== Generating Laravel APP_KEY ==="
+    php artisan key:generate --force
+fi
+
 echo "=== Running Laravel Database Migrations ==="
 php artisan migrate --force
 
