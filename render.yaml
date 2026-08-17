@@ -4,7 +4,7 @@ services:
     runtime: docker
     plan: free
     region: frankfurt
-    healthCheckPath: /
+    healthCheckPath: /up
     envVars:
       - key: APP_NAME
         value: UUP-IUG
