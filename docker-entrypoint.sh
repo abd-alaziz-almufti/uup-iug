@@ -16,6 +16,12 @@ fi
 if [ -n "$CACHE_STORE" ]; then
     sed -i "s|^CACHE_STORE=.*|CACHE_STORE=$CACHE_STORE|" .env || true
 fi
+if [ -n "$DB_URL" ]; then
+    sed -i "s|^DB_URL=.*|DB_URL=$DB_URL|" .env || true
+fi
+if [ -n "$DATABASE_URL" ]; then
+    sed -i "s|^DATABASE_URL=.*|DATABASE_URL=$DATABASE_URL|" .env || true
+fi
 
 # Ensure APP_KEY is valid base64 key
 if [ -z "$APP_KEY" ] || [[ "$APP_KEY" != base64:* ]]; then
