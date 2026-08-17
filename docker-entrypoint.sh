@@ -44,7 +44,8 @@ php artisan filament:upgrade || true
 php artisan vendor:publish --tag=laravel-assets --ansi --force || true
 
 # Ensure permissions
-chmod -R 775 storage bootstrap/cache || true
+chmod -R 777 storage bootstrap/cache || true
+chmod -R 755 public || true
 
 echo "=== Starting Laravel Application on Port ${PORT:-8080} ==="
 exec php artisan serve --host=0.0.0.0 --port="${PORT:-8080}"

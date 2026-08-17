@@ -60,8 +60,8 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-di
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-# Set directory permissions
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set directory permissions for app, storage and public assets
+RUN chown -R www-data:www-data /var/www/html
 
 EXPOSE 8080
 

@@ -42,7 +42,7 @@ services:
       - key: BCRYPT_ROUNDS
         value: 12
       - key: SEED_DATABASE
-        value: "true"
+        value: "false"
       - key: APP_KEY
         value: base64:8BbS5JjIjbhb/Z0VMtsgvR7lenqQ2ec4jcPcnZbQRPA=
 
