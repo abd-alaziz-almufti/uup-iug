@@ -38,8 +38,10 @@ php artisan route:cache
 php artisan view:cache
 php artisan event:cache
 
-echo "=== Creating Storage Symlink ==="
+echo "=== Publishing & Linking Assets ==="
 php artisan storage:link || true
+php artisan filament:upgrade || true
+php artisan vendor:publish --tag=laravel-assets --ansi --force || true
 
 # Ensure permissions
 chmod -R 775 storage bootstrap/cache || true
